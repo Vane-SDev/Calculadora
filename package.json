@@ -1,0 +1,23 @@
+{
+  "name": "calculadora",
+  "version": "1.0.0",
+  "description": "Esta es una calculadora creada con el curso de js de sergio code.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vane-SDev/Calculadora.git"
+  },
+  "keywords": [
+    "calculadora",
+    "js"
+  ],
+  "author": "VaneDev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vane-SDev/Calculadora/issues"
+  },
+  "homepage": "https://github.com/Vane-SDev/Calculadora#readme"
+}
