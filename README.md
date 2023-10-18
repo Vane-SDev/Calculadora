@@ -1,12 +1,12 @@
-## Link al curso completo de Javascript en Youtube:
-[VIDEO CURSO GRATIS COMPLETO: JavaScript Desde Cero por Sergie Code](https://youtu.be/N8Xt5rP_DUo)
+## Curso de JS. Primer Proyecto Calculadora
 
 
 # Tutorial de Calculadora en JavaScript
 
-Link para ver resultado: [CALCULADORA TRABAJO TERMINADO](https://calculadora-tutorial-js.netlify.app/)
+Link para ver resultado: [Modelo de calculadora que se tenía que obtener como resultado](https://calculadora-tutorial-js.netlify.app/)
 
-Este es un tutorial que te guiará a través del proceso de creación de una calculadora utilizando JavaScript. El código HTML y CSS necesario para la interfaz de la calculadora estará disponible en el repositorio, por lo que nos centraremos en explicar el funcionamiento del código JavaScript a continuación.
+Curso de JS de @Sergie Code, primera actividad practica donde se realizó la creación de una calculadora básica. 
+En el curso se compartió un modelo a seguir, al cual le agregue otras funcionalidades y le cambie el estilo.
 
 ## Funciones Principales
 
