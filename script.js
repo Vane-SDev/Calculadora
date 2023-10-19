@@ -9,7 +9,7 @@ function borrar(){
 }
 
 function calcular(){
-    const valorPantalla = document.getElementById('pantalla').value
+    const valorPantalla = document.getElementById('pantalla').value;
     let resultado;
 
     //Verificar si es raiz cuadrada
@@ -27,11 +27,14 @@ else if(valorPantalla.includes('²')){
 }
 // verificar si es porcentaje
 
-else if(valorPantalla.includes('%')){
-    const numero = parseFloat(valorPantalla);
-    resultado = numero / 100;
+else if (valorPantalla.includes('%')) {
+    // Si se encuentra un porcentaje, se divide el número anterior por 100.
+    const operacion = valorPantalla.split('%');
+    if (operacion.length === 2) {
+        const numero = parseFloat(operacion[0]);
+        resultado = (numero / 100) * parseFloat(operacion[1]);
 }
-
+}
 // para el resto de las operaciones
 
 else{
