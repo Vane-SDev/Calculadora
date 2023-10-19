@@ -13,50 +13,53 @@
     <h1>Calculadora Básica</h1>
     
     <div class="calculadora">
-        <input type="text" id="pantalla" readonly autofocus>
+        <div class="pantallaInput">
+            <input type="text" id="pantalla" readonly autofocus>
+        </div>
         <br>
-        <input type="button" value="√" onclick="agregar('√')">
-        <!-- <input type="button" value="∛" onclick="agregar('∛')"> --> 
-        <input type="button" value="x²" onclick="agregar('²')"> 
-        <input id="backspace" type="button" value="⇦" onclick="retroceder('⇦')"> 
-        <input type="button" value="C" onclick="borrar('C')">
+        <div class="teclas">
+            <input class="operadores" type="button" value="√" onclick="agregar('√')">
+            <!-- <input type="button" value="∛" onclick="agregar('∛')"> --> 
+            <input class="operadores" type="button" value="x²" onclick="agregar('²')"> 
+            <input class="operadores" type="button" value="⇦" onclick="retroceder('⇦')"> 
+            <input type="button" value="C" onclick="borrar('C')">
 
-        <br>
+            <br>
 
-        <input type="button" value="%" onclick="agregar('%')">
-        <input type="button" value="( " onclick="agregarParentesis('(')">
-        <input type="button" value=")" onclick="quitarParentesis(')')">
-        <input type="button" value="➗" onclick="agregar('/')">
-        <br>
+            <input class="operadores" type="button" value="%" onclick="agregar('%')">
+            <input class="operadores" type="button" value="( " onclick="agregarParentesis('(')">
+            <input class="operadores" type="button" value=")" onclick="quitarParentesis(')')">
+            <input class="operadores" type="button" value="÷" onclick="agregar('/')">
+            <br>
 
-        <input type="button" value="7" onclick="agregar('7')">
-        <input type="button" value="8" onclick="agregar('8')">
-        <input type="button" value="9" onclick="agregar('9')">
-        <input type="button" value="✖" onclick="agregar('*')">
+            <input type="button" value="7" onclick="agregar('7')">
+            <input type="button" value="8" onclick="agregar('8')">
+            <input type="button" value="9" onclick="agregar('9')">
+            <input class="operadores" type="button" value="×" onclick="agregar('*')">
 
-        <br>
+            <br>
 
-        <input type="button" value="4" onclick="agregar('4')">
-        <input type="button" value="5" onclick="agregar('5')">
-        <input type="button" value="6" onclick="agregar('6')">
-        <input type="button" value="➖" onclick="agregar('-')">
+            <input type="button" value="4" onclick="agregar('4')">
+            <input type="button" value="5" onclick="agregar('5')">
+            <input type="button" value="6" onclick="agregar('6')">
+            <input class="operadores" type="button" value="−" onclick="agregar('-')">
 
-        <br>
+            <br>
 
-        <input type="button" value="1" onclick="agregar('1')">
-        <input type="button" value="2" onclick="agregar('2')">
-        <input type="button" value="3" onclick="agregar('3')">
-        <input type="button" value="➕" onclick="agregar('+')">
-        <br>
-        <input type="button" value="±" onclick="cambiarSigno()">
-        <input type="button" value="0" onclick="agregar('0')">
-        <input type="button" value="." onclick="agregar('.')"> 
-        <input type="button" value="=" onclick="calcular('=')">
-        <br>
-        
+            <input type="button" value="1" onclick="agregar('1')">
+            <input type="button" value="2" onclick="agregar('2')">
+            <input type="button" value="3" onclick="agregar('3')">
+            <input class="operadores" type="button" value="+" onclick="agregar('+')">
+            <br>
+            <input class="operadores" type="button" value="±" onclick="cambiarSigno()">
+            <input type="button" value="0" onclick="agregar('0')">
+            <input class="operadores" type="button" value="." onclick="agregar('.')"> 
+            <input class="operadores" type="button" value="=" onclick="calcular('=')">
+            <br>
+        </div>
 
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 
