@@ -28,12 +28,14 @@ else if(valorPantalla.includes('²')){
 // verificar si es porcentaje
 
 else if (valorPantalla.includes('%')) {
-    // Si se encuentra un porcentaje, se divide el número anterior por 100.
-    const operacion = valorPantalla.split('%');
-    if (operacion.length === 2) {
-        const numero = parseFloat(operacion[0]);
-        resultado = (numero / 100) * parseFloat(operacion[1]);
-}
+    const partes = valorPantalla.split('*');
+    if (partes.length === 2) {
+        const numero = parseFloat(partes[0]);
+        const porcentaje = parseFloat(partes[1].replace('%', '')) / 100;
+        if (!Number.isNaN(numero) && !Number.isNaN(porcentaje)) {
+            resultado = numero * porcentaje;
+        }
+    }
 }
 // para el resto de las operaciones
 
