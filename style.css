@@ -1,6 +1,7 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
+  background-color: #fffbfb00;
+  background-image:url('./assets/background-1311251_1280.jpg')  ;
 }
 
 h1 {
@@ -17,10 +18,10 @@ h2 {
 .calculadora {
   width: 314px;
   margin: 0 auto;
-  background-color: #fff;
+  background-color: #0403032d;
   padding: 20px;
   border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
 }
 
 #pantalla {
@@ -37,7 +38,7 @@ input[type="button"] {
   margin-right: 5px;
   margin-bottom: 5px;
   font-size: 16px;
-  background-color: #eee;
+  background-color: #ffffff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
