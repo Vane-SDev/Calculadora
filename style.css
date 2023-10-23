@@ -18,7 +18,7 @@ h2 {
 }
 
 .calculadora {
-  width: 480px;
+  width: 90%;
   margin: 0 auto;
   background: linear-gradient(180deg,#958c8c34, #302c2c68);
   padding: 20px;
@@ -34,26 +34,31 @@ h2 {
 }
 
 #pantalla {
-  width: 380px;
+  width: 100%;
   padding: 10px;
   font-size: 30px;
   margin-bottom: 10px;
   text-align: right;
 }
 
+.row{
+
+  margin-right: 0;
+  text-align: center;
+}
 input[type="button"] {
-  width: 80px;
+  width: 120%;
   height: 50px;
-  margin-right: 5px;
+  margin:0px 0px;
   margin-bottom: 10px;
-  padding: 5px 10px; /* Ajusta el padding según tus necesidades */
+  padding: 5px 10px;
   font-size: 18px;
   background-color: #ffffff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   background: linear-gradient(180deg, #f0f0f0, #ffffff);
-  text-align: center; /* Añade alineación de texto al centro */
+  text-align: center; 
 }
 
 input[type="button"]:hover {

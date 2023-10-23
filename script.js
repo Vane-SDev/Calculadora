@@ -42,6 +42,8 @@ function calcular() {
         valorPantalla = valorPantalla.replace(/\*\*/g, '^');
         // Calcular la expresión con Math.js
         resultado = math.evaluate(valorPantalla);
+
+
     } catch (error) {
         console.error("Error en la expresión matemática:", error);
         resultado = "Error";
