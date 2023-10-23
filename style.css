@@ -8,7 +8,7 @@ body {
 h1 {
   text-align: center;
   margin-top: 30px;
-  color:white;
+  color:white; 
 }
 
 h2 {
@@ -18,7 +18,7 @@ h2 {
 }
 
 .calculadora {
-  width: 380px;
+  width: 480px;
   margin: 0 auto;
   background: linear-gradient(180deg,#958c8c34, #302c2c68);
   padding: 20px;
@@ -34,7 +34,7 @@ h2 {
 }
 
 #pantalla {
-  width: 314px;
+  width: 380px;
   padding: 10px;
   font-size: 30px;
   margin-bottom: 10px;
@@ -46,39 +46,46 @@ input[type="button"] {
   height: 50px;
   margin-right: 5px;
   margin-bottom: 10px;
+  padding: 5px 10px; /* Ajusta el padding según tus necesidades */
   font-size: 18px;
   background-color: #ffffff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  background: linear-gradient(180deg,#f0f0f0, #ffffff);
+  background: linear-gradient(180deg, #f0f0f0, #ffffff);
+  text-align: center; /* Añade alineación de texto al centro */
 }
-
 
 input[type="button"]:hover {
   background-color: #ddd;
   font-size: 18px;
-  color:blue;
+  color: blue;
   margin-bottom: 10px;
   font-weight: 600;
   background: linear-gradient(150deg, #8687ae, #f0f0f0);
 }
 
+
 /* input[type="button"]:last-child {
   margin-right: 0;
 } */
-.teclas{
+/* .teclas{
   text-align: center;
   
-}
+} */
 
-.operadores{
+/* .operadores{
   color:rgb(251, 255, 0);
   font-weight: 500;
   
+} */
+
+
+.btn-primary{
+  --bs-btn-color: blue;
 }
 
-input.operadores{
-  background:rgb(30, 0, 255);
+#indice{
+  display: none;
 }
 

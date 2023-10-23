@@ -6,7 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.2/math.js" integrity="sha512-SZF47arYfRSVmLDgkgsUNkKNha7brZ5WTCEIPNga3sh0Vw+Vs8hkslDKz0hvmovPqJrCKdH/4OlkxOFzueC+DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="stylesheet" href="./style.css"> <!-- Tu archivo personalizado después de Bootstrap -->
+
 </head>
 
 <body>
@@ -16,50 +20,51 @@
         <div class="pantallaInput">
             <input type="text" id="pantalla" readonly autofocus>
         </div>
+        <input type="text" id="indice" placeholder="Índice">
         <br>
-        <div class="teclas">
-            <input class="operadores" type="button" value="√" onclick="agregar('√')">
+        <div class="row">
+            <div class="col-3">
+                <input class="btn btn-primary" type="button" value="√x" onclick="agregar('√')">
+                <input class="btn btn-primary" type="button" value="%" onclick="agregar('%')">
+                <input type="button" value="7" onclick="agregar('7')">
+                <input type="button" value="4" onclick="agregar('4')">
+                <input type="button" value="1" onclick="agregar('1')">
+                <input class="btn btn-primary" type="button" value="±" onclick="cambiarSigno()">
             <!-- <input type="button" value="∛" onclick="agregar('∛')"> --> 
-            <input class="operadores" type="button" value="x²" onclick="agregar('²')"> 
-            <input class="operadores" type="button" value="⇦" onclick="retroceder('⇦')"> 
-            <input type="button" value="C" onclick="borrar('C')">
-
+            </div>
             <br>
-
-            <input class="operadores" type="button" value="%" onclick="agregar('%')">
-            <input class="operadores" type="button" value="( " onclick="agregarParentesis('(')">
-            <input class="operadores" type="button" value=")" onclick="quitarParentesis(')')">
-            <input class="operadores" type="button" value="÷" onclick="agregar('/')">
+            <div class="col-3">
+                <input class="btn btn-primary" type="button" value="^" onclick="agregar('^')">
+                <input class="btn btn-primary" type="button" value="( " onclick="agregarParentesis('(')">
+                <input type="button" value="8" onclick="agregar('8')">
+                <input type="button" value="5" onclick="agregar('5')">
+                <input type="button" value="2" onclick="agregar('2')">
+                <input type="button" value="0" onclick="agregar('0')">
+            </div>
             <br>
-
-            <input type="button" value="7" onclick="agregar('7')">
-            <input type="button" value="8" onclick="agregar('8')">
-            <input type="button" value="9" onclick="agregar('9')">
-            <input class="operadores" type="button" value="×" onclick="agregar('*')">
-
-            <br>
-
-            <input type="button" value="4" onclick="agregar('4')">
-            <input type="button" value="5" onclick="agregar('5')">
-            <input type="button" value="6" onclick="agregar('6')">
-            <input class="operadores" type="button" value="−" onclick="agregar('-')">
-
-            <br>
-
-            <input type="button" value="1" onclick="agregar('1')">
-            <input type="button" value="2" onclick="agregar('2')">
-            <input type="button" value="3" onclick="agregar('3')">
-            <input class="operadores" type="button" value="+" onclick="agregar('+')">
-            <br>
-            <input class="operadores" type="button" value="±" onclick="cambiarSigno()">
-            <input type="button" value="0" onclick="agregar('0')">
-            <input class="operadores" type="button" value="." onclick="agregar('.')"> 
-            <input class="operadores" type="button" value="=" onclick="calcular('=')">
-            <br>
+            <div class="col-3">
+                <input class="btn btn-primary" type="button" value="⇦" onclick="retroceder('⇦')"> 
+                <input class="btn btn-primary" type="button" value=")" onclick="quitarParentesis(')')">
+                <input type="button" value="9" onclick="agregar('9')">
+                <input type="button" value="6" onclick="agregar('6')">
+                <input type="button" value="3" onclick="agregar('3')">
+                <input class="btn btn-primary" type="button" value="." onclick="agregar('.')"> 
+            </div>
+            <div class="col-3">
+                <input type="button" value="C" onclick="borrar('C')">
+                <input class="btn btn-primary" type="button" value="÷" onclick="agregar('/')">
+                <input class="btn btn-primary" type="button" value="×" onclick="agregar('*')">
+                <input class="btn btn-primary" type="button" value="−" onclick="agregar('-')">
+                <input class="btn btn-primary" type="button" value="+" onclick="agregar('+')">
+                <input class="btn btn-primary" type="button" value="=" onclick="calcular('=')">
+            </div>
         </div>
-
     </div>
 
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <script src="script.js"></script>
 </body>
 
