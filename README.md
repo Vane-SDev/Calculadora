@@ -6,9 +6,9 @@
 Link para ver resultado: [Modelo de calculadora que se tenía que obtener como resultado](https://calculadora-tutorial-js.netlify.app/)
 
 Curso de JS de @Sergie Code, primera actividad practica donde se realizó la creación de una calculadora básica. 
-En el curso se compartió un modelo a seguir, al cual le agregue otras funcionalidades y le cambie el estilo.
+En el curso se compartió un modelo a seguir, al cual se le agregó otras funcionalidades y cambios en el estilo.
 
-## Funciones Principales
+<!-- ## Funciones Principales
 
 ### `agregarALaPantalla(value)`
 
