@@ -1,96 +1,428 @@
+/* Variables */
+:root {
+    --sidebar-width: 250px;
+    --sidebar-width-collapsed: 80px;
+    --primary-color: #2196F3; /* Azul de Bootstrap */
+    --secondary-color: #6c757d; /* Gris de Bootstrap */
+    --success-color: #198754;  /* Verde de Bootstrap */
+    --danger-color: #dc3545;   /* Rojo de Bootstrap */
+    --warning-color: #ffc107;  /* Amarillo de Bootstrap */
+    --info-color: #0dcaf0;     /* Celeste de Bootstrap */
+    --light-color: #f8f9fa;    /* Claro de Bootstrap */
+    --dark-color: #212529;     /* Oscuro de Bootstrap */
+    --gradient-primary: linear-gradient(135deg, var(--primary-color), #1976D2);
+    --gradient-dark: linear-gradient(135deg, var(--dark-color), #37474F);
+    --shadow-soft: 0 2px 15px rgba(0, 0, 0, 0.1);
+    --shadow-strong: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos Generales */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #fffbfb00;
-  background-image:url('./assets/abstract-1500065_1920.jpg')  ;
-  background-position: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #E3F2FD, #BBDEFB); /* Un fondo suave */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: var(--dark-color);
+    line-height: 1.6; /* Mejor legibilidad */
 }
 
-h1 {
-  text-align: center;
-  margin-top: 30px;
-  color:white; 
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 100vh;
 }
 
-h2 {
-  text-align: center;
-  margin-top: 10px;
-  color: #666;
+/* Sidebar (Mantengo tus estilos de sidebar) */
+#sidebar {
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    background: var(--gradient-dark);
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+    position: fixed; /* Lo dejaremos fixed por ahora, pero considera si el contenido principal debe evitarlo */
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
+    box-shadow: var(--shadow-strong);
+    overflow-y: auto; /* Para scroll si el menú es largo */
 }
 
+#sidebar.active {
+    min-width: var(--sidebar-width-collapsed);
+    max-width: var(--sidebar-width-collapsed);
+    text-align: center;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: var(--gradient-primary);
+    text-align: center;
+}
+
+#sidebar .sidebar-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.6em; /* Ajustado */
+    font-weight: 600;
+}
+
+#sidebar ul.components {
+    padding: 15px 0; /* Ajustado */
+}
+
+#sidebar ul li a {
+    padding: 12px 20px; /* Ajustado */
+    font-size: 1em;   /* Ajustado */
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s;
+    border-left: 3px solid transparent;
+}
+
+#sidebar ul li a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid var(--primary-color);
+}
+
+#sidebar ul li a.active {
+    background: var(--primary-color); /* Más destacado */
+    border-left: 3px solid var(--info-color); /* O un color que contraste */
+}
+
+#sidebar.active .sidebar-header h3 {
+    display: none;
+}
+#sidebar.active .sidebar-header { /* Para que el header no ocupe tanto espacio colapsado */
+    padding: 10px;
+}
+#sidebar.active ul li a {
+    padding: 12px 5px; /* Ajustado */
+    text-align: center;
+    font-size: 0.8em; /* Ajustado */
+}
+
+#sidebar.active ul li a i {
+    margin-right: 0;
+    display: block;
+    font-size: 1.5em; /* Ajustado */
+    margin-bottom: 3px;
+}
+
+/* Contenido Principal */
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease-in-out; /* Transición en margin-left */
+    margin-left: var(--sidebar-width);
+    background: transparent; /* El body ya tiene fondo */
+}
+
+#content.active {
+    margin-left: var(--sidebar-width-collapsed);
+}
+
+/* Botón Toggle Sidebar */
+#sidebarCollapse {
+    position: fixed;
+    top: 15px;  /* Ajustado */
+    left: 15px; /* Ajustado */
+    z-index: 1000;
+    display: none; /* Se mostrará con media query */
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 12px; /* Ajustado */
+    border-radius: 5px;
+    box-shadow: var(--shadow-soft);
+}
+#sidebarCollapse:hover {
+    background: #1976D2; /* Un poco más oscuro al hover */
+}
+
+
+/* Títulos Principales de las Calculadoras */
+h1, .calculadora-container h2 {
+    text-align: center;
+    margin-top: 15px; /* Margen unificado */
+    margin-bottom: 20px;
+    color: var(--dark-color); /* Color oscuro para buen contraste en fondo claro */
+    font-weight: 600;
+}
+h1 { /* Título principal de la página */
+    font-size: 2rem;
+    color: #fff; /* Si quieres que el H1 general sea blanco sobre el fondo degradado del body */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+.calculadora-container h2 { /* Títulos de cada calculadora */
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+}
+
+
+/* Contenedor de cada tipo de Calculadora */
+.calculadora-container {
+    max-width: 500px; /* Un max-width para la sección de la calculadora */
+    margin: 0 auto;   /* Centrado */
+    padding: 0 10px;  /* Un poco de padding lateral */
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos para la Calculadora (Básica y Científica) */
 .calculadora {
-  width: 90%;
-  margin: 0 auto;
-  background: linear-gradient(180deg,#958c8c34, #302c2c68);
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-  text-align: center;
+    background: #fdfdfd; /* Un blanco ligeramente menos puro */
+    padding: 20px;    /* Padding general */
+    border-radius: 12px; /* Bordes más suaves */
+    box-shadow: var(--shadow-strong);
+    margin-top: 10px; /* Margen respecto al h2 */
+    /* max-width: 380px; /* Ya no es necesario aquí si .calculadora-container lo maneja */
+    /* width: 90%;  /* Dejar que Bootstrap o el max-width lo controlen */
+    /* margin: 0 auto; */ /* Ya está en .calculadora-container */
+    /* text-align: center; */ /* No es necesario aquí, los botones se alinean en columnas */
 }
 
-.pantallaInput{
-  text-align: center;
-  margin: 20px 0;
-
+/* Pantalla de la Calculadora */
+/* Usar #pantalla y #pantallaBasica si son diferentes, o una clase común */
+#pantalla, #pantallaBasica {
+    font-size: 2rem;   /* Tamaño inicial, se ajustará en media queries */
+    text-align: right;
+    border: none;
+    background: #e9ecef; /* Un gris claro para la pantalla */
+    border-radius: 8px;  /* Bordes más suaves */
+    padding: 10px 15px; /* Padding ajustado */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Para que ocupe el div .pantallaInput */
+    margin-bottom: 15px; /* Espacio antes de los botones */
+    /* Quita height fija, deja que el padding y font-size definan la altura */
 }
 
-#pantalla {
-  width: 100%;
-  padding: 10px;
-  font-size: 30px;
-  margin-bottom: 10px;
-  text-align: right;
+/* Botones de la Calculadora (Clase .btn de Bootstrap) */
+/* Estos estilos se aplicarán a todos los inputs que tengan la clase .btn */
+.calculadora .btn { /* Más específico para botones dentro de la calculadora */
+    font-size: 1.1rem;  /* Tamaño inicial, se ajustará en media queries */
+    padding: 10px 5px; /* Padding vertical y horizontal. Ajusta según el texto del botón. */
+    /* height: auto; */ /* Dejar que el padding y font-size definan la altura */
+    margin: 0; /* Bootstrap gx-2 y mb-2 en las filas se encargarán del espaciado */
+    border-radius: 8px;
+    border: none; /* Bootstrap ya lo quita para .btn */
+    transition: all 0.2s ease; /* Transición más rápida */
+    box-shadow: var(--shadow-soft);
+    /* width: 100%; */ /* Esto ya lo hace la clase w-100 de Bootstrap en el HTML */
+    display: flex; /* Para centrar contenido si el texto es corto o hay íconos */
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2; /* Para mejor centrado vertical del texto */
+    min-height: 45px; /* Una altura mínima para que no se hagan demasiado pequeños */
 }
 
-.row{
-
-  margin-right: 0;
-  text-align: center;
-}
-input[type="button"] {
-  width: 120%;
-  height: 50px;
-  margin:0px 0px;
-  margin-bottom: 10px;
-  padding: 5px 10px;
-  font-size: 18px;
-  background-color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background: linear-gradient(180deg, #f0f0f0, #ffffff);
-  text-align: center; 
+.calculadora .btn:hover {
+    transform: translateY(-1px); /* Efecto hover más sutil */
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-input[type="button"]:hover {
-  background-color: #ddd;
-  font-size: 18px;
-  color: blue;
-  margin-bottom: 10px;
-  font-weight: 600;
-  background: linear-gradient(150deg, #8687ae, #f0f0f0);
+.calculadora .btn:active {
+    transform: translateY(0px);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Estilos de color para botones (puedes mantener los que ya tienes o usar los de Bootstrap directamente) */
+/* Los que definiste con linear-gradient son bonitos. Asegúrate que el color de texto contraste bien. */
+/* .btn-light, .btn-primary, etc. ya tienen estilos de Bootstrap. */
+/* Los que tenías en tu CSS para .btn-light, .btn-primary, etc., con gradientes están bien. */
+/* Solo asegúrate que el color del texto dentro de ellos sea legible. Bootstrap lo hace. */
+/* Por ejemplo, .btn-primary de Bootstrap ya es azul con texto blanco. */
+/* Si usas tus propios gradientes, verifica el color del texto: */
+.btn-primary { /* Tu gradiente */
+    background: var(--gradient-primary);
+    color: white !important; /* Asegurar que el texto sea blanco */
+}
+.btn-info { /* Tu gradiente */
+    background: linear-gradient(135deg, #00BCD4, #0097A7);
+    color: white !important;
+}
+/* ... y así para los otros colores de botón que personalizaste ... */
+.btn-light { /* Para números, un estilo más plano puede ser mejor */
+    background-color: #f8f9fa;
+    color: var(--dark-color);
+    border: 1px solid #dee2e6; /* Un borde sutil para botones claros */
+}
+.btn-light:hover {
+    background-color: #e9ecef;
 }
 
 
-/* input[type="button"]:last-child {
-  margin-right: 0;
-} */
-/* .teclas{
-  text-align: center;
-  
-} */
-
-/* .operadores{
-  color:rgb(251, 255, 0);
-  font-weight: 500;
-  
-} */
-
-
-.btn-primary{
-  --bs-btn-color: blue;
+/* Input 'indice' (si decides usarlo) */
+#indice {
+    display: none; /* Mantener oculto por ahora */
 }
 
-#indice{
-  display: none;
+
+/* Calculadora Financiera (tus estilos se veían bien) */
+.calculadora-financiera .form-label {
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+.calculadora-financiera input[type="number"].form-control {
+    font-size: 1rem; /* Ajustado */
+    padding: 10px;   /* Ajustado */
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+}
+.calculadora-financiera input[type="number"].form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(var(--primary-color-rgb, 33, 150, 243), 0.25); /* Usando variable o color directo */
+}
+.calculadora-financiera .btn { /* Para que los botones de la financiera también se ajusten */
+    padding: 10px;
+    font-size: 1rem;
 }
 
+
+/* Tabla de Derivadas (tus estilos se veían bien) */
+.table-responsive {
+    margin-top: 20px;
+    background: white;
+    border-radius: 12px; /* Coherencia */
+    box-shadow: var(--shadow-soft);
+    overflow: hidden; /* Para que el borde redondeado afecte a la tabla */
+}
+.table { margin-bottom: 0; }
+.table th {
+    background: var(--gradient-primary);
+    color: white;
+    font-weight: 600;
+    padding: 12px; /* Ajustado */
+}
+.table td {
+    padding: 10px; /* Ajustado */
+    vertical-align: middle;
+}
+
+/* ---- Media Queries para Responsive ---- */
+
+/* Tablets y móviles grandes */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: calc(-1 * var(--sidebar-width)); /* Ocultar por defecto */
+    }
+    #sidebar.active {
+        margin-left: 0; /* Mostrar cuando está activo */
+    }
+    #content {
+        margin-left: 0; /* El contenido ocupa todo el ancho */
+        padding: 15px; /* Menos padding general */
+    }
+    #sidebarCollapse {
+        display: block; /* Mostrar el botón para abrir/cerrar sidebar */
+    }
+    
+    /* Ajustar calculadora para que no esté pegada al botón del sidebar */
+    .calculadora-container h2, h1 { 
+        margin-top: 60px; /* Espacio para el botón de sidebar si está fijo arriba */
+    }
+     .calculadora {
+        padding: 15px;
+    }
+
+    #pantalla, #pantallaBasica {
+        font-size: 1.6rem; /* Reducir tamaño de fuente de la pantalla */
+        padding: 10px;
+        min-height: 45px; /* Altura mínima para la pantalla */
+    }
+    .calculadora .btn {
+        font-size: 0.9rem;  /* Reducir fuente de botones */
+        padding: 8px 4px;  /* Reducir padding de botones */
+        min-height: 40px; /* Altura mínima */
+        /* Los 'margin' ya no están en .btn, se manejan por gx- gutter en .row */
+    }
+     .calculadora-container { /* Reducir padding del contenedor general de cada calculadora */
+        padding: 0 5px; 
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 576px) {
+    h1 { font-size: 1.8rem; }
+    .calculadora-container h2 { font-size: 1.3rem; }
+
+    #pantalla, #pantallaBasica {
+        font-size: 1.4rem; /* Aún más pequeño */
+        padding: 8px;
+        min-height: 40px;
+    }
+    .calculadora .btn {
+        font-size: 0.8rem; /* Muy importante para que quepan más caracteres en botones si es necesario */
+        padding: 6px 3px;   /* Aún menos padding */
+        min-height: 35px;  /* Altura mínima */
+    }
+    
+    /* Ajustes para los inputs de la financiera en móviles pequeños */
+    .calculadora-financiera input[type="number"].form-control {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+    .calculadora-financiera .btn {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    /* Ajustes para la tabla en móviles pequeños */
+    .table th, .table td {
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+
+    #sidebar.active ul li a i { /* Iconos del sidebar colapsado más pequeños */
+        font-size: 1.3em;
+    }
+     #sidebar.active ul li a {
+        font-size: 0.7em; 
+    }
+}
+
+@media (max-width: 360px) { /* Para pantallas muy muy pequeñas */
+    .calculadora .btn {
+        font-size: 0.7rem;
+        padding: 5px 2px;
+        min-height: 30px;
+    }
+    #pantalla, #pantallaBasica {
+        font-size: 1.2rem;
+        min-height: 35px;
+    }
+}
+
+/* Animaciones (Mantengo tu animación) */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* .calculadora-container { animation: fadeIn 0.3s ease-out; } // Lo quité para que no se repita al cambiar de calc. */
+
+/* Modal Polinomios (tus estilos se veían bien) */
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    box-shadow: var(--shadow-strong);
+}
+.modal-header {
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 15px 15px 0 0; /* Solo redondear arriba si el footer también tiene estilos */
+    padding: 15px 20px; /* Ajustado */
+}
+.modal-body {
+    padding: 20px; /* Ajustado */
+}
+.modal-footer {
+    border-top: 1px solid #eee;
+    padding: 15px 20px; /* Ajustado */
+}
+
+/* Eliminé la sección duplicada de estilos que tenías al final de tu archivo original */
+/* Las clases de Bootstrap como .mb-2, .w-100, .gx-2 no necesitan redefinirse aquí, ya vienen con Bootstrap */

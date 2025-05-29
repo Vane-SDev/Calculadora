@@ -1,0 +1,10 @@
+{
+  "name": "Calculadora Científica",
+  "short_name": "Calculadora",
+  "description": "Una calculadora científica con funciones avanzadas",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff"
+  
+} 

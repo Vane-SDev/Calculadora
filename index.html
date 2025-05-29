@@ -5,67 +5,363 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora</title>
+    <title>Calculadora Multifuncional</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.2/math.js" integrity="sha512-SZF47arYfRSVmLDgkgsUNkKNha7brZ5WTCEIPNga3sh0Vw+Vs8hkslDKz0hvmovPqJrCKdH/4OlkxOFzueC+DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <link rel="stylesheet" href="./style.css"> <!-- Tu archivo personalizado después de Bootstrap -->
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.2/math.js"></script>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-    <h1>Calculadora Básica</h1>
-    
-    <div class="calculadora">
-        <div class="pantallaInput">
-            <input type="text" id="pantalla" readonly autofocus>
-        </div>
-        <input type="text" id="indice" placeholder="Índice">
-        <br>
-        <div class="row">
-            <div class="col-3">
-                <input class="btn btn-primary" type="button" value="√x" onclick="agregar('√')">
-                <input class="btn btn-primary" type="button" value="%" onclick="agregar('%')">
-                <input type="button" value="7" onclick="agregar('7')">
-                <input type="button" value="4" onclick="agregar('4')">
-                <input type="button" value="1" onclick="agregar('1')">
-                <input class="btn btn-primary" type="button" value="±" onclick="cambiarSigno()">
-            <!-- <input type="button" value="∛" onclick="agregar('∛')"> --> 
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="active">
+            <div class="sidebar-header">
+                <h3>Calculadora</h3>
             </div>
-            <br>
-            <div class="col-3">
-                <input class="btn btn-primary" type="button" value="^" onclick="agregar('^')">
-                <input class="btn btn-primary" type="button" value="( " onclick="agregarParentesis('(')">
-                <input type="button" value="8" onclick="agregar('8')">
-                <input type="button" value="5" onclick="agregar('5')">
-                <input type="button" value="2" onclick="agregar('2')">
-                <input type="button" value="0" onclick="agregar('0')">
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="#" onclick="cambiarCalculadora('basica')" class="nav-link active">
+                        <i class="bi bi-calculator"></i> Calculadora Básica
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="cambiarCalculadora('cientifica')" class="nav-link">
+                        <i class="bi bi-calculator-fill"></i> Calculadora Científica
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="cambiarCalculadora('financiera')" class="nav-link">
+                        <i class="bi bi-currency-dollar"></i> Calculadora Financiera
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="cambiarCalculadora('tabla')" class="nav-link">
+                        <i class="bi bi-table"></i> Tabla de Derivadas e Integrales
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenido Principal -->
+        <div id="content">
+            <!-- Toggle Sidebar Button -->
+            <button type="button" id="sidebarCollapse" class="btn btn-info">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!-- Calculadora Básica -->
+            <div id="calculadoraBasica" class="calculadora-container">
+                <h2>Calculadora Básica</h2>
+                <div class="calculadora calculadora-basica">
+                    <div class="pantallaInput">
+                        <input type="text" id="pantallaBasica" class="form-control form-control-lg mb-2" readonly autofocus>
+                    </div>
+                    <div class="container-fluid px-1">
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="7" onclick="agregar('7')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="8" onclick="agregar('8')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="9" onclick="agregar('9')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="÷" onclick="agregar('/')"></div>
+                        </div>
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="4" onclick="agregar('4')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="5" onclick="agregar('5')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="6" onclick="agregar('6')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="×" onclick="agregar('*')"></div>
+                        </div>
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="1" onclick="agregar('1')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="2" onclick="agregar('2')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="3" onclick="agregar('3')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="−" onclick="agregar('-')"></div>
+                        </div>
+                        <div class="row gx-2 mb-2">
+                            <div class="col-6"><input class="btn btn-light w-100" type="button" value="0" onclick="agregar('0')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="." onclick="agregar('.')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="+" onclick="agregar('+')"></div>
+                        </div>
+                        <div class="row gx-2">
+                            <div class="col-9"><input class="btn btn-danger w-100" type="button" value="C" onclick="borrar()"></div>
+                            <div class="col-3"><input class="btn btn-success w-100" type="button" value="=" onclick="calcular()"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <br>
-            <div class="col-3">
-                <input class="btn btn-primary" type="button" value="⇦" onclick="retroceder('⇦')"> 
-                <input class="btn btn-primary" type="button" value=")" onclick="quitarParentesis(')')">
-                <input type="button" value="9" onclick="agregar('9')">
-                <input type="button" value="6" onclick="agregar('6')">
-                <input type="button" value="3" onclick="agregar('3')">
-                <input class="btn btn-primary" type="button" value="." onclick="agregar('.')"> 
+
+            <!-- Calculadora Científica -->
+            <div id="calculadoraCientifica" class="calculadora-container" style="display: none;">
+                <h2>Calculadora Científica</h2>
+                <div class="calculadora">
+                    <div class="pantallaInput">
+                        <input type="text" id="pantalla" class="form-control form-control-lg mb-2" readonly autofocus> 
+                    </div>
+                    <input type="text" id="indice" placeholder="Índice"> 
+
+                    <div class="container-fluid px-1">
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="sin"
+                                    onclick="agregar('sin(')"></div>
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="cos"
+                                    onclick="agregar('cos(')"></div>
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="tan"
+                                    onclick="agregar('tan(')"></div>
+                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="π"
+                                    onclick="agregar('pi')"></div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="asin"
+                                    onclick="agregar('asin(')"></div>
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="acos"
+                                    onclick="agregar('acos(')"></div>
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="atan"
+                                    onclick="agregar('atan(')"></div>
+                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="e"
+                                    onclick="agregar('e')"></div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="log"
+                                    onclick="agregar('log(')"></div>
+                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="ln" onclick="agregar('ln(')">
+                            </div>
+                            
+                            <div class="col-3"><input class="btn btn-warning w-100" type="button" value="P(x)" onclick="abrirModalPolinomios()">
+                            </div> 
+                            
+                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="a/b"
+                                    onclick="convertirAFraccion()"></div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="("
+                                    onclick="agregarParentesis('(')"></div>
+                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value=")"
+                                    onclick="quitarParentesis()"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="^" onclick="agregar('^')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="%" onclick="agregar('%')">
+                            </div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="√x" onclick="agregar('√')"></div>
+                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="±"
+                                    onclick="cambiarSigno()"></div>
+                            <div class="col-3"><input class="btn btn-warning w-100" type="button" value="⇦" onclick="retroceder()">
+                            </div>
+                            <div class="col-3"><input class="btn btn-danger w-100" type="button" value="C" onclick="borrar()"></div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="7" onclick="agregar('7')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="8" onclick="agregar('8')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="9" onclick="agregar('9')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="÷" onclick="agregar('/')">
+                            </div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="4" onclick="agregar('4')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="5" onclick="agregar('5')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="6" onclick="agregar('6')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="×" onclick="agregar('*')">
+                            </div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="1" onclick="agregar('1')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="2" onclick="agregar('2')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="3" onclick="agregar('3')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="−" onclick="agregar('-')">
+                            </div>
+                        </div>
+
+                        <div class="row gx-2 mb-2">
+                            <div class="col-6"><input class="btn btn-light w-100" type="button" value="0" onclick="agregar('0')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="." onclick="agregar('.')">
+                            </div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="+" onclick="agregar('+')">
+                            </div>
+                        </div>
+                        <div class="row gx-2">
+                            <div class="col-12"><input class="btn btn-success w-100" type="button" value="=" onclick="calcular()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-3">
-                <input type="button" value="C" onclick="borrar('C')">
-                <input class="btn btn-primary" type="button" value="÷" onclick="agregar('/')">
-                <input class="btn btn-primary" type="button" value="×" onclick="agregar('*')">
-                <input class="btn btn-primary" type="button" value="−" onclick="agregar('-')">
-                <input class="btn btn-primary" type="button" value="+" onclick="agregar('+')">
-                <input class="btn btn-primary" type="button" value="=" onclick="calcular('=')">
+
+            <!-- Calculadora Financiera -->
+            <div id="calculadoraFinanciera" class="calculadora-container" style="display: none;">
+                <h2>Calculadora Financiera</h2>
+                <div class="calculadora calculadora-financiera">
+                    <div class="container-fluid px-1">
+                        <div class="mb-3">
+                            <label for="pv" class="form-label">Valor Presente (PV)</label>
+                            <input type="number" class="form-control" id="pv" placeholder="Ingrese PV">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fv" class="form-label">Valor Futuro (FV)</label>
+                            <input type="number" class="form-control" id="fv" placeholder="Ingrese FV">
+                        </div>
+                        <div class="mb-3">
+                            <label for="pmt" class="form-label">Pagos (PMT)</label>
+                            <input type="number" class="form-control" id="pmt" placeholder="Ingrese PMT">
+                        </div>
+                        <div class="mb-3">
+                            <label for="n" class="form-label">Número de Períodos (N)</label>
+                            <input type="number" class="form-control" id="n" placeholder="Ingrese N">
+                        </div>
+                        <div class="mb-3">
+                            <label for="rate" class="form-label">Tasa de Interés (I/Y)</label>
+                            <input type="number" class="form-control" id="rate" placeholder="Ingrese I/Y">
+                        </div>
+                        <div class="row gx-2">
+                            <div class="col-12">
+                                <button id="calcularPV" class="btn btn-primary w-100 mb-2">Calcular PV</button>
+                                <button id="calcularFV" class="btn btn-primary w-100 mb-2">Calcular FV</button>
+                                <button id="calcularPMT" class="btn btn-primary w-100 mb-2">Calcular PMT</button>
+                                <button id="calcularN" class="btn btn-primary w-100 mb-2">Calcular N</button>
+                                <button id="calcularRate" class="btn btn-primary w-100 mb-2">Calcular I/Y</button>
+                                <button id="limpiarFinanciera" class="btn btn-danger w-100">Limpiar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Derivadas e Integrales -->
+            <div id="tablaDerivadas" class="calculadora-container" style="display: none;">
+                <h2>Tabla de Derivadas e Integrales</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Función</th>
+                                <th>Derivada</th>
+                                <th>Integral</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>x<sup>n</sup></td>
+                                <td>nx<sup>n-1</sup></td>
+                                <td>(x<sup>n+1</sup>)/(n+1) + C</td>
+                            </tr>
+                            <tr>
+                                <td>e<sup>x</sup></td>
+                                <td>e<sup>x</sup></td>
+                                <td>e<sup>x</sup> + C</td>
+                            </tr>
+                            <tr>
+                                <td>ln(x)</td>
+                                <td>1/x</td>
+                                <td>x ln(x) - x + C</td>
+                            </tr>
+                            <tr>
+                                <td>sin(x)</td>
+                                <td>cos(x)</td>
+                                <td>-cos(x) + C</td>
+                            </tr>
+                            <tr>
+                                <td>cos(x)</td>
+                                <td>-sin(x)</td>
+                                <td>sin(x) + C</td>
+                            </tr>
+                            <tr>
+                                <td>tan(x)</td>
+                                <td>sec²(x)</td>
+                                <td>-ln|cos(x)| + C</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
+    <div class="modal fade" id="polinomioModal" tabindex="-1" role="dialog" aria-labelledby="polinomioModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="polinomioModalLabel">Resolver Polinomio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="gradoPolinomio" class="form-label">Grado del Polinomio:</label>
+                        <select class="form-select" id="gradoPolinomio" onchange="configurarInputsPolinomio()">
+                            <option value="1">1 (ax + b = 0)</option>
+                            <option value="2" selected>2 (ax² + bx + c = 0)</option>
+                            <option value="3">3 (ax³ + bx² + cx + d = 0)</option>
+                        </select>
+                    </div>
+    
+                    <p><strong>Introduce los coeficientes:</strong></p>
+                    <div class="row g-2 align-items-center mb-2">
+                        <div class="col-auto" id="label_a">
+                            <label for="coefA" class="col-form-label">a (x³):</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" id="coefA" placeholder="Coeficiente de x³">
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center mb-2">
+                        <div class="col-auto" id="label_b">
+                            <label for="coefB" class="col-form-label">b (x²):</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" id="coefB" placeholder="Coeficiente de x²">
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center mb-2">
+                        <div class="col-auto" id="label_c">
+                            <label for="coefC" class="col-form-label">c (x):</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" id="coefC" placeholder="Coeficiente de x">
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center mb-3">
+                        <div class="col-auto" id="label_d">
+                            <label for="coefD" class="col-form-label">d (constante):</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" id="coefD" placeholder="Término constante">
+                        </div>
+                    </div>
+    
+                    <button type="button" class="btn btn-primary" onclick="resolverPolinomioDesdeModal()">Resolver</button>
+    
+                    <div id="resultadoPolinomio" class="mt-3">
+                        <p><strong>Raíces:</strong></p>
+                        <div id="raicesOutput"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
