@@ -1,47 +1,56 @@
 // script.js
 document.addEventListener("DOMContentLoaded", function () {
-  // Referencias a pantallas (la científica es 'pantalla', la básica es 'pantallaBasica')
   const pantallaCientifica = document.getElementById("pantalla");
   const pantallaBasica = document.getElementById("pantallaBasica");
-  // const indiceInput = document.getElementById("indice"); // Sigue disponible si lo necesitas
 
-  let pantallaActual = null; // Se asignará en cambiarCalculadora()
+  let pantallaActual = null;
   let calculadoraActual = "basica";
 
+  // --- Variables y Lógica para Modo Angular (DEG/RAD) ---
+  let anguloModoActual = "RAD";
+  let btnAnguloModoElem = document.getElementById("btnAnguloModo"); // Intentar inicializar aquí
+
+  // --- Importar funciones DEG/RAD personalizadas a Math.js ---
   try {
     math.import(
       {
-        ln: function (x) {
-          // Definimos nuestra función 'ln'
-          return math.log(x); // Hacemos que llame a math.log(x), que es el logaritmo natural
+        sind: function (angle) {
+          return math.sin(math.unit(angle, "deg"));
         },
-        // Para que el botón "log" que escribe "log(" funcione como logaritmo base 10
-        log: function (x) {
-          return math.log10(x); // math.log10(x) es logaritmo base 10
+        cosd: function (angle) {
+          return math.cos(math.unit(angle, "deg"));
         },
-        // Si en el futuro añades sind, cosd, etc., irían aquí también, separados por comas:
-        // sind: function(angle) { return math.sin(math.unit(angle, 'deg')); },
-        // cosd: function(angle) { return math.cos(math.unit(angle, 'deg')); }
+        tand: function (angle) {
+          return math.tan(math.unit(angle, "deg"));
+        },
+        asind: function (value) {
+          return math.number(math.asin(value), "deg");
+        },
+        acosd: function (value) {
+          return math.number(math.acos(value), "deg");
+        },
+        atand: function (value) {
+          return math.number(math.atan(value), "deg");
+        },
       },
       { override: false }
-    ); // 'override: false' es más seguro si no estás segura si 'ln' podría existir
-    console.log(
-      "Función 'ln' personalizada importada a math.js (ln(x) ahora llama a math.log(x))"
     );
+    console.log("Funciones DEG/RAD personalizadas importadas a math.js");
   } catch (e) {
-    console.error("Error al importar función 'ln' a math.js:", e);
+    console.error("Error al importar funciones DEG/RAD a math.js:", e);
   }
 
-
-  if (!pantallaCientifica) {
+  if (!btnAnguloModoElem && document.getElementById("calculadoraCientifica")) {
+    console.warn("ADVERTENCIA: Botón #btnAnguloModo no encontrado al inicio.");
+  }
+  if (!pantallaCientifica && document.getElementById("calculadoraCientifica")) {
     console.warn(
       "ADVERTENCIA: Elemento #pantalla (de la calc. científica) no encontrado."
     );
   }
-  if (!pantallaBasica) {
+  if (!pantallaBasica && document.getElementById("calculadoraBasica")) {
     console.warn("ADVERTENCIA: Elemento #pantallaBasica no encontrado.");
   }
-
 
   // --- Función para manejar porcentajes ---
   function manejarPorcentajes(expresion) {
@@ -78,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Error (Infinito)",
         "Error (No num)",
         "Error: Tipo desconocido",
+        "Error Sintaxis Raíz",
       ].includes(valorPrevio)
     ) {
       pantallaActual.value = "";
@@ -91,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function calcular() {
-    if (!pantallaActual) return; // Asegúrate que pantallaActual esté definida y sea el input correcto
+    if (!pantallaActual) return;
     let valorPantalla = pantallaActual.value;
     let resultado;
 
@@ -102,58 +112,112 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      // 1. Manejo especial para SUMA o RESTA de porcentajes:
+      // --- Transformaciones ANTES de math.evaluate ---
+      // 1. Transformar "ln(" a "log(" (math.js usa log para natural)
+      valorPantalla = valorPantalla.replace(/ln\(/g, "log(");
+
+      // 2. Transformar "log(" (que el usuario entiende como base 10) a "log10("
       valorPantalla = valorPantalla.replace(
-        /(\d+(?:\.\d+)?)\s*([\+\-])\s*(\d+(?:\.\d+)?)%/g,
-        (match, num1, operador, num2) => {
-          return `${num1} ${operador} (${num1} * ${num2} / 100)`;
-        }
+        /(?<![a-zA-Z0-9_])log\(/g,
+        "log10("
       );
 
-      // 2. Manejo general para otros porcentajes (multiplicación, división, o porcentaje solo):
-      valorPantalla = valorPantalla.replace(
-        /(\d+(?:\.\d+)?)%/g,
-        (match, num) => `(${num}/100)`
-      );
+      // 3. Si estamos en modo DEG (y en la calculadora científica), transformar funciones trigonométricas
+      if (anguloModoActual === "DEG" && calculadoraActual === "cientifica") {
+        valorPantalla = valorPantalla.replace(
+          /(?<![a-zA-Z0-9_])sin\(/g,
+          "sind("
+        );
+        valorPantalla = valorPantalla.replace(
+          /(?<![a-zA-Z0-9_])cos\(/g,
+          "cosd("
+        );
+        valorPantalla = valorPantalla.replace(
+          /(?<![a-zA-Z0-9_])tan\(/g,
+          "tand("
+        );
+        valorPantalla = valorPantalla.replace(
+          /(?<![a-zA-Z0-9_])asin\(/g,
+          "asind("
+        );
+        valorPantalla = valorPantalla.replace(
+          /(?<![a-zA-Z0-9_])acos\(/g,
+          "acosd("
+        );
+        valorPantalla = valorPantalla.replace(
+          /(?<![a-zA-Z0-9_])atan\(/g,
+          "atand("
+        );
+      }
+      // --- Fin Transformaciones para UX ---
 
-      // 3. Raíces (N√M o √M):
+      if (valorPantalla.includes("%")) {
+        valorPantalla = manejarPorcentajes(valorPantalla);
+      }
+
       valorPantalla = valorPantalla.replace(
         /(\d+(?:\.\d+)?)√(\d+(\.\d+)?)/g,
-        // ------ CALLBACK CORREGIDO AQUÍ ------
         (match, indiceStr, radicandoStr) => {
-          console.log("--- Depurando Raíz (Callback Corregido) ---");
-          console.log("Match completo de la regex:", match);
-          console.log("String para índice (indiceStr):", indiceStr);
-          console.log("String para radicando (radicandoStr):", radicandoStr); // Este debería tener el valor correcto
-
           const indice = indiceStr ? parseFloat(indiceStr) : 2;
           const radicando = parseFloat(radicandoStr);
-
-          console.log("Índice parseado:", indice);
-          console.log("Radicando parseado:", radicando);
-
           if (isNaN(indice) || isNaN(radicando) || indice <= 0) {
-            console.error('CONDICIÓN DE "Error Raíz" CUMPLIDA!');
-            return "Error Raíz";
+            return "Error Sintaxis Raíz";
           }
-          const reemplazo = `nthRoot(${radicando}, ${indice})`;
-          console.log("Reemplazo generado:", reemplazo);
-          return reemplazo;
+          return `nthRoot(${radicando}, ${indice})`;
         }
       );
 
-      // El console.log para ver la cadena final antes de evaluar:
-      console.log(
-        "Para evaluar con math.js (después de procesar raíces):",
-        valorPantalla
-      );
+      console.log("Para evaluar con math.js:", valorPantalla);
+      resultado = math.evaluate(valorPantalla);
 
-      resultado = math.evaluate(valorPantalla); // Solo una llamada a evaluate aquí
+      console.log("Resultado crudo de math.evaluate:", resultado); // Log para ver el valor antes de ajustar
 
-      // Formateo de resultado
+      // ****** NUEVO: Ajuste inteligente para valores cercanos a exactos ******
+      if (typeof resultado === "number" && isFinite(resultado)) {
+        const epsilon = 1e-14; // Una tolerancia pequeña para la comparación
+
+        // Ajustar a 0
+        if (Math.abs(resultado) < epsilon) {
+          resultado = 0;
+          console.log("Resultado ajustado a 0 exacto.");
+        }
+        // Ajustar a 1
+        else if (Math.abs(resultado - 1) < epsilon) {
+          resultado = 1;
+          console.log("Resultado ajustado a 1 exacto.");
+        }
+        // Ajustar a -1
+        else if (Math.abs(resultado + 1) < epsilon) {
+          // resultado - (-1) es resultado + 1
+          resultado = -1;
+          console.log("Resultado ajustado a -1 exacto.");
+        }
+        // Ajustar a 0.5
+        else if (Math.abs(resultado - 0.5) < epsilon) {
+          resultado = 0.5;
+          console.log("Resultado ajustado a 0.5 exacto.");
+        }
+        // Ajustar a -0.5
+        else if (Math.abs(resultado + 0.5) < epsilon) {
+          resultado = -0.5;
+          console.log("Resultado ajustado a -0.5 exacto.");
+        }
+        // Podrías añadir más ajustes si lo ves necesario para otros valores comunes, por ejemplo:
+        // else if (Math.abs(resultado - math.sqrt(2)/2) < epsilon) {
+        //     resultado = math.evaluate('sqrt(2)/2'); // Para mantener la precisión de math.js
+        //     console.log("Resultado ajustado a sqrt(2)/2 exacto.");
+        // }
+        // else if (Math.abs(resultado - math.sqrt(3)/2) < epsilon) {
+        //     resultado = math.evaluate('sqrt(3)/2');
+        //     console.log("Resultado ajustado a sqrt(3)/2 exacto.");
+        // }
+      }
+
       if (typeof resultado === "number") {
         if (!isFinite(resultado)) {
           resultado = "Error (Infinito)";
+        } else if (resultado === 0) {
+          // Mostrar 0 simplemente como "0"
         } else if (
           Math.abs(resultado) > 1e12 ||
           (Math.abs(resultado) < 1e-9 && resultado !== 0)
@@ -208,7 +272,8 @@ document.addEventListener("DOMContentLoaded", function () {
         error.message.toLowerCase().includes("unexpected end of expression") ||
         error.message.toLowerCase().includes("value expected") ||
         error.message.toLowerCase().includes("parenthesis mismatch") ||
-        error.message.toLowerCase().includes("undefined symbol")
+        error.message.toLowerCase().includes("undefined symbol") ||
+        valorPantalla === "Error Sintaxis Raíz"
       ) {
         resultado = "Error Sintaxis";
       } else {
@@ -276,23 +341,21 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // --- Funciones para Solver de Polinomios ---
+  // (Aquí va el código completo de las funciones: miModalPolinomios, configurarInputsPolinomio,
+  // abrirModalPolinomios, resolverPolinomioDesdeModal que te pasé en el Turno 51/53/55)
+  // ... (ASEGÚRATE DE PEGAR TU CÓDIGO COMPLETO DEL SOLVER DE POLINOMIOS AQUÍ) ...
+  // COMIENZO DEL CÓDIGO DE POLINOMIOS (PEGAR AQUÍ EL DEL TURNO 55)
   let miModalPolinomios;
-
   const modalPolinomioElement = document.getElementById("polinomioModal");
   if (modalPolinomioElement) {
     miModalPolinomios = new bootstrap.Modal(modalPolinomioElement);
-
-    // Manejar foco cuando el modal se cierra para accesibilidad
     modalPolinomioElement.addEventListener("hidden.bs.modal", function () {
-      // Quitar foco de cualquier elemento dentro del modal que pudiera tenerlo
       if (
         document.activeElement &&
         modalPolinomioElement.contains(document.activeElement)
       ) {
         document.activeElement.blur();
       }
-      // Devolver el foco al botón que abrió el modal (P(x))
-      // Para mayor robustez, considera darle un ID a tu botón P(x) y usar getElementById
       const triggerButtonPoly = document.querySelector(
         'input[type="button"][value="P(x)"]'
       );
@@ -313,7 +376,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     const grado = parseInt(gradoSelect.value);
-
     const uiParts = {
       coefA_row: document.getElementById("coefA")?.parentElement?.parentElement,
       coefB_row: document.getElementById("coefB")?.parentElement?.parentElement,
@@ -329,15 +391,6 @@ document.addEventListener("DOMContentLoaded", function () {
       coefD_input: document.getElementById("coefD"),
       raicesOutput: document.getElementById("raicesOutput"),
     };
-
-    for (const part in uiParts) {
-      if (!uiParts[part] && part !== "raicesOutput") {
-        console.warn(
-          `Elemento del modal para polinomios no encontrado: ${part}`
-        );
-      }
-    }
-
     if (uiParts.coefA_row)
       uiParts.coefA_row.style.display = grado === 3 ? "" : "none";
     if (uiParts.coefB_row)
@@ -346,7 +399,6 @@ document.addEventListener("DOMContentLoaded", function () {
       uiParts.coefC_row.style.display = grado >= 1 ? "" : "none";
     if (uiParts.coefD_row)
       uiParts.coefD_row.style.display = grado >= 1 ? "" : "none";
-
     if (grado === 1) {
       if (uiParts.label_c_text) uiParts.label_c_text.textContent = "a (x):";
       if (uiParts.coefC_input)
@@ -383,21 +435,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     if (uiParts.raicesOutput) uiParts.raicesOutput.innerHTML = "";
   }
-
   function abrirModalPolinomios() {
     if (miModalPolinomios) {
       configurarInputsPolinomio();
       miModalPolinomios.show();
       setTimeout(() => {
-        const gradoSelect = document.getElementById("gradoPolinomio");
-        if (gradoSelect) gradoSelect.focus();
+        const gs = document.getElementById("gradoPolinomio");
+        if (gs) gs.focus();
       }, 200);
     } else {
-      console.error("La instancia del modal de polinomios no está definida.");
-      alert("Error: El solucionador de polinomios no está disponible.");
+      console.error("Modal polinomios no definido.");
+      alert("Error: Solver no disponible.");
     }
   }
-
   function resolverPolinomioDesdeModal() {
     const gradoSelect = document.getElementById("gradoPolinomio");
     if (!gradoSelect) return;
@@ -405,10 +455,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const raicesOutput = document.getElementById("raicesOutput");
     if (!raicesOutput) return;
     raicesOutput.innerHTML = "";
-
     let a_poly, b_poly, c_poly, d_poly;
     let raices = [];
-
     try {
       if (grado === 1) {
         a_poly = parseFloat(document.getElementById("coefC").value);
@@ -417,8 +465,8 @@ document.addEventListener("DOMContentLoaded", function () {
           throw new Error("Coeficientes inválidos.");
         if (math.equal(a_poly, 0)) {
           raicesOutput.innerHTML = math.equal(b_poly, 0)
-            ? "<p>Infinitas soluciones (0x + 0 = 0)</p>"
-            : "<p>Sin solución (0x + b = 0, b≠0)</p>";
+            ? "<p>Infinitas soluciones</p>"
+            : "<p>Sin solución</p>";
           return;
         }
         raices = [-b_poly / a_poly];
@@ -431,36 +479,30 @@ document.addEventListener("DOMContentLoaded", function () {
         if (math.equal(a_poly, 0)) {
           if (math.equal(b_poly, 0)) {
             raicesOutput.innerHTML = math.equal(c_poly, 0)
-              ? "<p>Infinitas soluciones (0x² + 0x + 0 = 0)</p>"
-              : "<p>Sin solución (0x² + 0x + c = 0, c≠0)</p>";
+              ? "<p>Infinitas soluciones</p>"
+              : "<p>Sin solución</p>";
             return;
           }
           raices = [-c_poly / b_poly];
         } else {
-          const discriminante = math.subtract(
-            math.pow(b_poly, 2),
-            4 * a_poly * c_poly
-          );
-          if (math.largerEq(discriminante, 0)) {
-            const raiz1 = math.divide(
-              math.add(-b_poly, math.sqrt(discriminante)),
+          const disc = math.subtract(math.pow(b_poly, 2), 4 * a_poly * c_poly);
+          if (math.largerEq(disc, 0)) {
+            const r1 = math.divide(
+              math.add(-b_poly, math.sqrt(disc)),
               2 * a_poly
             );
-            const raiz2 = math.divide(
-              math.subtract(-b_poly, math.sqrt(discriminante)),
+            const r2 = math.divide(
+              math.subtract(-b_poly, math.sqrt(disc)),
               2 * a_poly
             );
-            raices = math.equal(raiz1, raiz2) ? [raiz1] : [raiz1, raiz2];
+            raices = math.equal(r1, r2) ? [r1] : [r1, r2];
           } else {
-            const parteReal = -b_poly / (2 * a_poly);
-            const parteImaginaria = math.divide(
-              math.sqrt(math.multiply(discriminante, -1)),
+            const realP = -b_poly / (2 * a_poly);
+            const imagP = math.divide(
+              math.sqrt(math.multiply(disc, -1)),
               2 * a_poly
             );
-            raices = [
-              math.complex(parteReal, parteImaginaria),
-              math.complex(parteReal, -parteImaginaria),
-            ];
+            raices = [math.complex(realP, imagP), math.complex(realP, -imagP)];
           }
         }
       } else if (grado === 3) {
@@ -470,122 +512,93 @@ document.addEventListener("DOMContentLoaded", function () {
         d_poly = parseFloat(document.getElementById("coefD").value);
         if (isNaN(a_poly) || isNaN(b_poly) || isNaN(c_poly) || isNaN(d_poly))
           throw new Error("Coeficientes inválidos.");
-
         if (math.equal(a_poly, 0)) {
-          raicesOutput.innerHTML =
-            "<p>a=0, se reduce a ecuación cuadrática. Usa el solver de grado 2.</p>";
+          raicesOutput.innerHTML = "<p>a=0, usar solver grado 2.</p>";
           return;
         }
-
-        const B_norm = b_poly / a_poly;
-        const C_norm = c_poly / a_poly;
-        const D_norm = d_poly / a_poly;
-
-        const p_val = C_norm - math.pow(B_norm, 2) / 3;
-        const q_val =
-          (2 * math.pow(B_norm, 3)) / 27 - (B_norm * C_norm) / 3 + D_norm;
-
-        const delta_term1 = math.pow(q_val / 2, 2);
-        const delta_term2 = math.pow(p_val / 3, 3);
-        const delta = math.add(delta_term1, delta_term2);
-
-        const precision = 1e-9;
-
+        const Bn = b_poly / a_poly,
+          Cn = c_poly / a_poly,
+          Dn = d_poly / a_poly;
+        const p = (3 * Cn - Bn * Bn) / 3,
+          q = (2 * Bn * Bn * Bn - 9 * Bn * Cn + 27 * Dn) / 27;
+        const delta = (q / 2) * (q / 2) + (p / 3) * (p / 3) * (p / 3);
+        const prec = 1e-9;
         if (
-          math.abs(delta) < precision &&
-          math.abs(p_val) < precision &&
-          math.abs(q_val) < precision
+          math.abs(delta) < prec &&
+          math.abs(p) < prec &&
+          math.abs(q) < prec
         ) {
-          const y_r = 0;
-          raices = [y_r - B_norm / 3, y_r - B_norm / 3, y_r - B_norm / 3];
-        } else if (math.abs(delta) < precision) {
-          const y1_r = -2 * math.cbrt(q_val / 2);
-          const y2_r = math.cbrt(q_val / 2);
-          raices = [y1_r - B_norm / 3, y2_r - B_norm / 3, y2_r - B_norm / 3];
+          const y0 = 0;
+          raices = [y0 - Bn / 3, y0 - Bn / 3, y0 - Bn / 3];
+        } else if (math.abs(delta) < prec) {
+          const y1 = -2 * math.cbrt(q / 2),
+            y2 = math.cbrt(q / 2);
+          raices = [y1 - Bn / 3, y2 - Bn / 3, y2 - Bn / 3];
         } else if (delta > 0) {
-          const u_sqrt_delta = math.sqrt(delta);
-          const u_base_cub = math.add(-q_val / 2, u_sqrt_delta);
-          const v_base_cub = math.subtract(-q_val / 2, u_sqrt_delta);
-
-          const u_res = math.cbrt(u_base_cub);
-          const v_res = math.cbrt(v_base_cub);
-
-          const y1_r = math.add(u_res, v_res);
-          const y2_r_real = math.divide(
-            math.multiply(math.add(u_res, v_res), -1),
+          const u_s_d = math.sqrt(delta);
+          const u_b_c = math.add(-q / 2, u_s_d);
+          const v_b_c = math.subtract(-q / 2, u_s_d);
+          const u_r = math.cbrt(u_b_c);
+          const v_r = math.cbrt(v_b_c);
+          const y1_r = math.add(u_r, v_r);
+          const y2_r_re = math.divide(math.multiply(math.add(u_r, v_r), -1), 2);
+          const y2_r_im = math.divide(
+            math.multiply(math.subtract(u_r, v_r), math.sqrt(3)),
             2
           );
-          const y2_r_imag = math.divide(
-            math.multiply(math.subtract(u_res, v_res), math.sqrt(3)),
-            2
-          );
-
           raices = [
-            y1_r - B_norm / 3,
-            math.complex(y2_r_real - B_norm / 3, y2_r_imag),
-            math.complex(y2_r_real - B_norm / 3, -y2_r_imag),
+            y1_r - Bn / 3,
+            math.complex(y2_r_re - Bn / 3, y2_r_im),
+            math.complex(y2_r_re - Bn / 3, -y2_r_im),
           ];
         } else {
-          const p_term_abs_cubed_root = math.sqrt(
-            math.pow(math.abs(p_val / 3), 3)
-          );
-          let phi_arg_val = -q_val / (2 * p_term_abs_cubed_root);
-          if (phi_arg_val > 1) phi_arg_val = 1;
-          if (phi_arg_val < -1) phi_arg_val = -1;
-
-          const phi_val = math.acos(phi_arg_val);
-          const two_cbrt_r_val = 2 * math.cbrt(p_term_abs_cubed_root);
-
-          const y1_r = two_cbrt_r_val * math.cos(phi_val / 3);
-          const y2_r = two_cbrt_r_val * math.cos((phi_val + 2 * math.pi) / 3);
-          const y3_r = two_cbrt_r_val * math.cos((phi_val + 4 * math.pi) / 3);
-          raices = [y1_r - B_norm / 3, y2_r - B_norm / 3, y3_r - B_norm / 3];
+          const r_cub = math.sqrt(-math.pow(p / 3, 3));
+          let phi_arg = -q / (2 * r_cub);
+          if (phi_arg > 1) phi_arg = 1;
+          if (phi_arg < -1) phi_arg = -1;
+          const phi = math.acos(phi_arg);
+          const two_cbrt_r = 2 * math.cbrt(r_cub);
+          const y1_r = two_cbrt_r * math.cos(phi / 3);
+          const y2_r = two_cbrt_r * math.cos((phi + 2 * math.pi) / 3);
+          const y3_r = two_cbrt_r * math.cos((phi + 4 * math.pi) / 3);
+          raices = [y1_r - Bn / 3, y2_r - Bn / 3, y3_r - Bn / 3];
         }
       }
-
       if (raices.length > 0) {
         raicesOutput.innerHTML = raices
-          .map((raiz, i) => {
-            let raizStr;
-            if (typeof raiz === "number") {
-              raizStr = math.format(raiz, { notation: "fixed", precision: 5 });
+          .map((r, i) => {
+            let rs;
+            if (typeof r === "number") {
+              rs = math.format(r, { notation: "fixed", precision: 5 });
             } else if (
-              raiz &&
-              typeof raiz.re !== "undefined" &&
-              typeof raiz.im !== "undefined"
+              r &&
+              typeof r.re !== "undefined" &&
+              typeof r.im !== "undefined"
             ) {
-              const realPart = math.format(raiz.re, {
+              const rp = math.format(r.re, { notation: "fixed", precision: 5 });
+              const ipa = math.format(Math.abs(r.im), {
                 notation: "fixed",
                 precision: 5,
               });
-              const imagPartAbs = math.format(Math.abs(raiz.im), {
-                notation: "fixed",
-                precision: 5,
-              });
-              if (Math.abs(raiz.im) < 1e-9) {
-                raizStr = realPart;
-              } else if (
-                Math.abs(raiz.re) < 1e-9 &&
-                Math.abs(raiz.im) >= 1e-9
-              ) {
-                raizStr = `${raiz.im >= 0 ? "" : "-"} ${imagPartAbs}i`;
+              if (Math.abs(r.im) < 1e-9) {
+                rs = rp;
+              } else if (Math.abs(r.re) < 1e-9 && Math.abs(r.im) >= 1e-9) {
+                rs = `${r.im >= 0 ? "" : "-"} ${ipa}i`;
               } else {
-                raizStr = `${realPart} ${
-                  raiz.im >= 0 ? "+" : "-"
-                } ${imagPartAbs}i`;
+                rs = `${rp} ${r.im >= 0 ? "+" : "-"} ${ipa}i`;
               }
-              if (Math.abs(raiz.re) < 1e-9 && Math.abs(raiz.im) < 1e-9) {
-                raizStr = "0";
+              if (Math.abs(r.re) < 1e-9 && Math.abs(r.im) < 1e-9) {
+                rs = "0";
               }
             } else {
-              raizStr = String(raiz);
+              rs = String(r);
             }
-            return `<p>x<sub>${i + 1}</sub> = ${raizStr}</p>`;
+            return `<p>x<sub>${i + 1}</sub> = ${rs}</p>`;
           })
           .join("");
       } else if (raicesOutput.innerHTML === "") {
         raicesOutput.innerHTML =
-          "<p>No se encontraron raíces o el grado no es soportado.</p>";
+          "<p>No se encontraron raíces o grado no soportado.</p>";
       }
     } catch (e) {
       console.error("Error al resolver polinomio:", e);
@@ -594,36 +607,37 @@ document.addEventListener("DOMContentLoaded", function () {
       }</p>`;
     }
   }
-  // FIN DEL CÓDIGO DE POLINOMIOS
+  // FIN CÓDIGO DE POLINOMIOS
 
   // --- Funciones de la Calculadora Financiera ---
+  // (Aquí va el código completo de las funciones: setFinancialResult, getFinancialInput,
+  // calcularPV, calcularFV, calcularPMT, calcularN, calcularRate, limpiarFinanciera)
+  // ... (ASEGÚRATE DE PEGAR TU CÓDIGO COMPLETO DE CALCULADORA FINANCIERA AQUÍ) ...
   function setFinancialResult(elementId, value) {
     const elem = document.getElementById(elementId);
     if (!elem) return;
     if (typeof value === "number" && isFinite(value)) {
-      elem.value = value.toFixed(2); // Ajusta decimales según necesidad
+      elem.value = value.toFixed(2);
     } else {
-      elem.value = ""; // Dejar vacío en caso de error o NaN
-      console.error(`Error o valor no numérico para ${elementId}:`, value);
+      elem.value = "";
+      // console.error(`Error o valor no numérico para ${elementId}:`, value);
     }
   }
-
   function getFinancialInput(elementId, defaultValue = 0) {
     const elem = document.getElementById(elementId);
     const val = parseFloat(elem?.value);
     return isNaN(val) ? defaultValue : val;
   }
-
   function calcularPV() {
     const fv = getFinancialInput("fv");
     const rate = getFinancialInput("rate") / 100;
     const n = getFinancialInput("n");
     const pmt = getFinancialInput("pmt");
-
     try {
-      if (n <= 0) throw new Error("N debe ser > 0");
+      if (n <= 0 && !(n === 0 && pmt === 0 && math.equal(rate, 0)))
+        throw new Error("N debe ser > 0.");
       let pv_calc;
-      if (rate === 0) {
+      if (math.equal(rate, 0)) {
         pv_calc = -(fv + pmt * n);
       } else {
         pv_calc =
@@ -632,21 +646,19 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       setFinancialResult("pv", pv_calc);
     } catch (error) {
-      setFinancialResult("pv", "Error"); // Aunque queramos evitarlo, si hay error de lógica lo pasamos.
-      console.error("Error en calcularPV:", error);
+      setFinancialResult("pv", "");
+      console.error("Error en calcularPV:", error.message);
     }
   }
-
   function calcularFV() {
     const pv = getFinancialInput("pv");
     const rate = getFinancialInput("rate") / 100;
     const n = getFinancialInput("n");
     const pmt = getFinancialInput("pmt");
-
     try {
-      if (n < 0) throw new Error("N no puede ser negativo"); // n=0 podría ser válido si pv = -fv
+      if (n < 0) throw new Error("N no puede ser negativo.");
       let fv_calc;
-      if (rate === 0) {
+      if (math.equal(rate, 0)) {
         fv_calc = -(pv + pmt * n);
       } else {
         fv_calc =
@@ -655,211 +667,159 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       setFinancialResult("fv", fv_calc);
     } catch (error) {
-      setFinancialResult("fv", "Error");
-      console.error("Error en calcularFV:", error);
+      setFinancialResult("fv", "");
+      console.error("Error en calcularFV:", error.message);
     }
   }
-
   function calcularPMT() {
     const pv = getFinancialInput("pv");
     const fv = getFinancialInput("fv");
     const rate = getFinancialInput("rate") / 100;
     const n = getFinancialInput("n");
-
     try {
-      if (n <= 0) throw new Error("N debe ser > 0");
-      if (rate === 0) {
-        if (n === 0)
-          throw new Error("N y Tasa no pueden ser 0 simultáneamente para PMT");
+      if (n <= 0) throw new Error("N debe ser > 0.");
+      let pmt_calc;
+      if (math.equal(rate, 0)) {
+        if (n === 0) throw new Error("N y Tasa no pueden ser 0 para PMT");
         pmt_calc = -(pv + fv) / n;
       } else {
-        let numerador = fv - pv * Math.pow(1 + rate, n);
-        let denominador = (Math.pow(1 + rate, n) - 1) / rate;
-        if (Math.abs(denominador) < 1e-10)
-          throw new Error("División por cero o tasa inválida para PMT.");
-        pmt_calc = numerador / denominador;
+        let num = fv - pv * Math.pow(1 + rate, n);
+        let den = (Math.pow(1 + rate, n) - 1) / rate;
+        if (Math.abs(den) < 1e-10) throw new Error("Tasa inválida para PMT.");
+        pmt_calc = num / den;
       }
       setFinancialResult("pmt", pmt_calc);
     } catch (error) {
-      setFinancialResult("pmt", "Error");
-      console.error("Error en calcularPMT:", error);
+      setFinancialResult("pmt", "");
+      console.error("Error en calcularPMT:", error.message);
     }
   }
-
   function calcularN() {
     const pv = getFinancialInput("pv");
     const fv = getFinancialInput("fv");
     const rate = getFinancialInput("rate") / 100;
     const pmt = getFinancialInput("pmt");
-
     try {
       if (rate < 0)
-        throw new Error(
-          "La tasa no puede ser negativa para calcular N de esta forma."
-        );
+        throw new Error("La tasa no puede ser negativa para calcular N.");
       let n_calc;
-      if (rate === 0) {
-        if (pmt === 0)
-          throw new Error("PMT y Tasa no pueden ser 0 simultáneamente para N");
+      if (math.equal(rate, 0)) {
+        if (math.equal(pmt, 0))
+          throw new Error("PMT y Tasa no pueden ser 0 para N");
         n_calc = -(pv + fv) / pmt;
-        if (n_calc < 0)
-          throw new Error("Resultado N negativo, verificar entradas.");
+        if (n_calc < 0) throw new Error("N negativo, verificar entradas.");
       } else {
-        // Sign convention: PV is outflow (negative), PMT and FV are inflows (positive)
-        // Or PV is inflow (positive), PMT and FV are outflows (negative)
-        // Assuming standard formula where we solve for N:
         if (pmt !== 0) {
-          // N = ln((PMT - FV*rate) / (PMT + PV*rate)) / ln(1 + rate)
-          // Esta fórmula es sensible a los signos y valores de PV, FV, PMT.
-          // Para que el logaritmo sea de un número positivo:
-          // (PMT - FV*rate) y (PMT + PV*rate) deben tener el mismo signo.
           const term1 = pmt - fv * rate;
           const term2 = pmt + pv * rate;
           if (term1 === 0 && term2 === 0)
             throw new Error("Valores indeterminados para N");
           if (term1 * term2 <= 0)
-            throw new Error(
-              "Cálculo de N no posible con estos valores (log de neg/cero)"
-            );
+            throw new Error("Cálculo de N no posible (log de neg/cero)");
           n_calc = Math.log(term1 / term2) / Math.log(1 + rate);
         } else if (pv !== 0 && fv !== 0) {
-          // PMT es 0
           if (pv * fv >= 0)
             throw new Error("PV y FV deben tener signos opuestos si PMT=0");
           n_calc = Math.log(-fv / pv) / Math.log(1 + rate);
         } else {
-          throw new Error("Valores insuficientes o inválidos para calcular N");
+          throw new Error("Valores insuficientes para calcular N");
         }
-        if (n_calc < 0)
-          throw new Error("Resultado N negativo, verificar entradas.");
+        if (n_calc < 0) throw new Error("N negativo, verificar entradas.");
       }
       setFinancialResult("n", n_calc);
     } catch (error) {
-      setFinancialResult("n", "Error");
+      setFinancialResult("n", "");
       console.error("Error en calcularN:", error.message);
     }
   }
-
   function calcularRate() {
     const pv = getFinancialInput("pv");
     const fv = getFinancialInput("fv");
     const n = getFinancialInput("n");
     const pmt = getFinancialInput("pmt");
     const resultOutput = document.getElementById("rate");
-
     if (!resultOutput) return;
     if (n <= 0) {
       resultOutput.value = "";
       console.error("Error en calcularRate: N debe ser > 0");
       return;
     }
-
-    // Método de Newton-Raphson para encontrar la tasa
-    let rate_calc = 0.1; // Valor inicial para la tasa (10%)
+    let rate_calc = 0.1;
     const MAX_ITERATIONS = 100;
     const PRECISION = 1e-7;
-
     try {
-      // Caso especial: si no hay pagos periódicos y conocemos pv, fv, n
       if (pmt === 0) {
         if (pv === 0) {
           resultOutput.value = "";
           console.error("PV no puede ser 0 si PMT es 0 para calcular tasa.");
           return;
         }
-        // FV = PV * (1+rate)^N  => (FV/PV)^(1/N) = 1+rate => rate = (FV/PV)^(1/N) - 1
-        // Asegurarse que FV/PV sea positivo. Si son de signo opuesto, está bien. Si son del mismo signo, debe ser crecimiento.
         if ((fv > 0 && pv > 0 && fv < pv) || (fv < 0 && pv < 0 && fv > pv)) {
           throw new Error("FV y PV implican tasa negativa si PMT=0.");
         }
         let baseRate = fv / pv;
-        if (baseRate < 0) baseRate = -baseRate; // Tomar absoluto para la potencia, el signo se infiere
-
+        if (baseRate < 0) baseRate = -baseRate;
         rate_calc = Math.pow(baseRate, 1 / n) - 1;
-
-        // Si PV es negativo (inversión) y FV positivo (retorno), la tasa es positiva.
-        // Si PV es positivo y FV negativo, indica una pérdida, pero la fórmula da tasa positiva, necesita ajuste de convención.
-        // Generalmente, se asume que PV y FV tienen signos opuestos.
         if (pv > 0 && fv > 0 && fv < pv) {
-          // Depreciación con ambos positivos
-          // No es una tasa de crecimiento simple
-          throw new Error(
-            "Caso de depreciación no manejado para cálculo directo de tasa sin PMT."
-          );
+          throw new Error("Caso de depreciación no manejado.");
         }
-
         setFinancialResult("rate", rate_calc * 100);
         return;
       }
-
-      // Iteraciones para Newton-Raphson (cuando PMT no es cero)
       for (let i = 0; i < MAX_ITERATIONS; i++) {
         let f_val, df_val;
-        const term_plus_rate_N = Math.pow(1 + rate_calc, n);
-        const term_plus_rate_N_minus_1 = Math.pow(1 + rate_calc, n - 1);
-
+        const term_N = Math.pow(1 + rate_calc, n);
+        const term_N_m1 = Math.pow(1 + rate_calc, n - 1);
         if (Math.abs(rate_calc) < 1e-10) {
-          // Si la tasa es muy cercana a 0, usar la aproximación lineal
-          f_val = pv + pmt * n + fv; // Ecuación para tasa = 0
-          // Derivada de f(r) = PV*(1+r)^N + PMT*((1+r)^N-1)/r + FV  respecto a r evaluada en r=0 (usando L'Hopital para el término de PMT)
-          // d/dr (PMT*((1+r)^N-1)/r) en r=0 es PMT*N*(N-1)/2  (Esto es incorrecto)
-          // La derivada de PMT * sum_{k=1 to N} (1+r)^-k es -PMT * sum_{k=1 to N} k*(1+r)^(-k-1)
-          // Cerca de r=0, ( (1+r)^N - 1 ) / r  aprox N + N*(N-1)/2 * r
-          // Entonces PMT * (N + N*(N-1)/2 * r)
-          // Derivada de esto es PMT * N*(N-1)/2
-          // Derivada de PV*(1+r)^N es N*PV*(1+r)^(N-1) -> N*PV en r=0
-          // Derivada de FV*(1+r)^-N es -N*FV*(1+r)^(-N-1) -> -N*FV en r=0
-          // Esto se está complicando, el Newton-Raphson para tasas es notoriamente sensible.
+          f_val = pv + pmt * n + fv;
+          df_val = n * pv + (pmt * n * (n - 1)) / 2 - n * fv;
+          if (Math.abs(df_val) < 1e-10) df_val = pv > 0 ? -1e-10 : 1e-10;
+        } // Evitar división por cero, y usar una derivada más simple para r=0
+        else {
+          f_val = pv * term_N + (pmt * (term_N - 1)) / rate_calc + fv;
           df_val =
-            n * pv * (n > 0 ? term_plus_rate_N_minus_1 : 1) -
-            n * fv * (n > 0 ? Math.pow(1 + rate_calc, -n - 1) : 1) +
-            pmt *
-              (n * (n > 0 ? term_plus_rate_N_minus_1 : 1) * (n > 0 ? 1 : 0) -
-                ((n > 0 ? term_plus_rate_N : 1) - 1) * (n > 0 ? 1 : 0)); // Aproximación muy cruda
-          if (Math.abs(df_val) < 1e-10) df_val = 1e-10; // Evitar división por cero exacta
-        } else {
-          f_val =
-            pv * term_plus_rate_N +
-            (pmt * (term_plus_rate_N - 1)) / rate_calc +
-            fv;
-          df_val =
-            n * pv * term_plus_rate_N_minus_1 +
-            (pmt *
-              (n * term_plus_rate_N_minus_1 * rate_calc -
-                (term_plus_rate_N - 1))) /
+            n * pv * term_N_m1 +
+            (pmt * (n * term_N_m1 * rate_calc - (term_N - 1))) /
               (rate_calc * rate_calc) -
-            n * fv * Math.pow(1 + rate_calc, -n - 1); // Añadido término de FV para la derivada
+            n * fv * Math.pow(1 + rate_calc, -n - 1);
         }
-
         if (Math.abs(df_val) < 1e-10) {
-          throw new Error("Derivada cero, no se puede continuar (Rate)");
+          throw new Error("Derivada cero (Rate)");
         }
-
         const new_rate = rate_calc - f_val / df_val;
         if (Math.abs(new_rate - rate_calc) < PRECISION) {
           setFinancialResult("rate", new_rate * 100);
           return;
         }
         rate_calc = new_rate;
-        if (rate_calc < -0.99) {
-          // Evitar tasas menores a -99% que no tienen sentido
-          throw new Error("Tasa calculada fuera de rango razonable.");
-        }
+        if (rate_calc < -0.9999) {
+          throw new Error("Tasa fuera de rango.");
+        } // Evitar tasa < -100%
       }
-      throw new Error(
-        "Tasa no convergió después de " + MAX_ITERATIONS + " iteraciones"
-      );
+      throw new Error("Tasa no convergió");
     } catch (error) {
       console.error("Error en calcularRate:", error.message);
-      setFinancialResult("rate", "Error");
+      setFinancialResult("rate", "");
     }
   }
-
   function limpiarFinanciera() {
     ["pv", "fv", "pmt", "n", "rate"].forEach((id) => {
       const elem = document.getElementById(id);
       if (elem) elem.value = "";
     });
+  }
+  // FIN DE FUNCIONES FINANCIERAS
+
+  // ****** NUEVO: Funciones para el Modo Angular ******
+  function cambiarAnguloModo() {
+    if (anguloModoActual === "RAD") {
+      anguloModoActual = "DEG";
+      if (btnAnguloModoElem) btnAnguloModoElem.value = "DEG";
+    } else {
+      anguloModoActual = "RAD";
+      if (btnAnguloModoElem) btnAnguloModoElem.value = "RAD";
+    }
+    console.log("Modo angular cambiado a:", anguloModoActual);
   }
 
   // --- Inicialización de Calculadoras y Sidebar ---
@@ -889,6 +849,8 @@ document.addEventListener("DOMContentLoaded", function () {
       .getElementById("limpiarFinanciera")
       ?.addEventListener("click", limpiarFinanciera);
 
+    btnAnguloModoElem = document.getElementById("btnAnguloModo"); // Asegurar que se obtiene aquí
+
     cambiarCalculadora("basica");
   }
 
@@ -912,7 +874,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (tipo === "basica") {
         pantallaActual = document.getElementById("pantallaBasica");
       } else if (tipo === "cientifica") {
-        pantallaActual = pantallaCientifica; // Usar la const definida arriba
+        pantallaActual = pantallaCientifica;
+        if (!btnAnguloModoElem) {
+          // Intentar obtenerlo de nuevo si no se obtuvo al inicio
+          btnAnguloModoElem = document.getElementById("btnAnguloModo");
+        }
+        if (btnAnguloModoElem) btnAnguloModoElem.value = anguloModoActual;
       } else {
         pantallaActual = null;
       }
@@ -938,8 +905,13 @@ document.addEventListener("DOMContentLoaded", function () {
       linkActivo.classList.add("active");
     }
 
-    if (window.innerWidth <= 768) {
+    if (
+      window.innerWidth <= 768 &&
+      document.getElementById("sidebar")?.classList.contains("active")
+    ) {
+      // Solo cerrar si está activo
       document.getElementById("sidebar")?.classList.remove("active");
+      document.getElementById("content")?.classList.remove("active"); // Sincronizar content
     }
   }
 
@@ -952,17 +924,23 @@ document.addEventListener("DOMContentLoaded", function () {
   window.quitarParentesis = quitarParentesis;
   window.cambiarSigno = cambiarSigno;
   window.convertirAFraccion = convertirAFraccion;
+
   window.abrirModalPolinomios = abrirModalPolinomios;
   window.resolverPolinomioDesdeModal = resolverPolinomioDesdeModal;
   window.configurarInputsPolinomio = configurarInputsPolinomio;
+
   window.cambiarCalculadora = cambiarCalculadora;
-  // Exponer funciones financieras si son llamadas desde HTML (aunque los listeners se añaden en JS)
+
   window.calcularPV = calcularPV;
   window.calcularFV = calcularFV;
   window.calcularPMT = calcularPMT;
   window.calcularN = calcularN;
   window.calcularRate = calcularRate;
   window.limpiarFinanciera = limpiarFinanciera;
+
+  window.cambiarAnguloModo = cambiarAnguloModo;
+  // Ya no necesitamos presionarSin, presionarCos, etc., porque los botones llaman a agregar()
+  // y calcular() se encarga de la lógica DEG/RAD.
 
   if (document.getElementById("gradoPolinomio")) {
     configurarInputsPolinomio();
@@ -984,8 +962,9 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         if (miModalPolinomios && document.querySelector("#polinomioModal.show"))
           miModalPolinomios.hide();
+        // También cerrar otros modales si los hubiera y estuvieran abiertos
       }
-      return; // No procesar más para el teclado de la calculadora principal si el foco está en un modal o input financiero
+      return;
     }
 
     if (calculadoraActual !== "basica" && calculadoraActual !== "cientifica")
@@ -1072,5 +1051,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("keydown", manejarTeclado);
   inicializarCalculadoras();
 
-  console.log("Calculadora Multifuncional completamente lista.");
+  console.log(
+    "Calculadora Multifuncional completamente lista con modo angular."
+  );
 });
