@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // --- Variables y Lógica para Modo Angular (DEG/RAD) ---
   let anguloModoActual = "RAD";
-  let btnAnguloModoElem = document.getElementById("btnAnguloModo"); // Intentar inicializar aquí
+  let btnAnguloModoElem; // Se inicializará en inicializarCalculadoras o cambiarCalculadora
 
   // --- Importar funciones DEG/RAD personalizadas a Math.js ---
   try {
@@ -40,16 +40,20 @@ document.addEventListener("DOMContentLoaded", function () {
     console.error("Error al importar funciones DEG/RAD a math.js:", e);
   }
 
-  if (!btnAnguloModoElem && document.getElementById("calculadoraCientifica")) {
-    console.warn("ADVERTENCIA: Botón #btnAnguloModo no encontrado al inicio.");
+  // Verificaciones iniciales de elementos (opcional, pueden ir dentro de inicializar)
+  if (document.getElementById("calculadoraCientifica")) {
+    // Solo verificar si el contenedor existe
+    if (!pantallaCientifica) {
+      console.warn(
+        "ADVERTENCIA: Elemento #pantalla (de la calc. científica) no encontrado."
+      );
+    }
+    // btnAnguloModoElem se busca en inicializarCalculadoras y cambiarCalculadora
   }
-  if (!pantallaCientifica && document.getElementById("calculadoraCientifica")) {
-    console.warn(
-      "ADVERTENCIA: Elemento #pantalla (de la calc. científica) no encontrado."
-    );
-  }
-  if (!pantallaBasica && document.getElementById("calculadoraBasica")) {
-    console.warn("ADVERTENCIA: Elemento #pantallaBasica no encontrado.");
+  if (document.getElementById("calculadoraBasica")) {
+    if (!pantallaBasica) {
+      console.warn("ADVERTENCIA: Elemento #pantallaBasica no encontrado.");
+    }
   }
 
   // --- Función para manejar porcentajes ---
@@ -113,16 +117,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       // --- Transformaciones ANTES de math.evaluate ---
-      // 1. Transformar "ln(" a "log(" (math.js usa log para natural)
       valorPantalla = valorPantalla.replace(/ln\(/g, "log(");
-
-      // 2. Transformar "log(" (que el usuario entiende como base 10) a "log10("
       valorPantalla = valorPantalla.replace(
         /(?<![a-zA-Z0-9_])log\(/g,
         "log10("
       );
 
-      // 3. Si estamos en modo DEG (y en la calculadora científica), transformar funciones trigonométricas
+      //trigonometría
       if (anguloModoActual === "DEG" && calculadoraActual === "cientifica") {
         valorPantalla = valorPantalla.replace(
           /(?<![a-zA-Z0-9_])sin\(/g,
@@ -149,12 +150,34 @@ document.addEventListener("DOMContentLoaded", function () {
           "atand("
         );
       }
-      // --- Fin Transformaciones para UX ---
+
+      valorPantalla = valorPantalla.replace(
+        /(\d+(?:\.\d+)?|\([^\)]+\))\s*nCr\s*(\d+(?:\.\d+)?|\([^\)]+\))/g,
+        (match, n, k) => {
+          console.log(
+            `Transformando nCr: '${match}' a 'combinations(${n}, ${k})'`
+          );
+          return `combinations(${n}, ${k})`;
+        }
+      );
+
+      valorPantalla = valorPantalla.replace(
+        /(\d+(?:\.\d+)?|\([^\)]+\))\s*nPr\s*(\d+(?:\.\d+)?|\([^\)]+\))/g,
+        (match, n, k) => {
+          console.log(
+            `Transformando nPr: '${match}' a 'permutations(${n}, ${k})'`
+          );
+          return `permutations(${n}, ${k})`;
+        }
+      );
+
+      //Porcentaje
 
       if (valorPantalla.includes("%")) {
         valorPantalla = manejarPorcentajes(valorPantalla);
       }
 
+      //Raices
       valorPantalla = valorPantalla.replace(
         /(\d+(?:\.\d+)?)√(\d+(\.\d+)?)/g,
         (match, indiceStr, radicandoStr) => {
@@ -169,55 +192,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
       console.log("Para evaluar con math.js:", valorPantalla);
       resultado = math.evaluate(valorPantalla);
+      console.log("Resultado crudo de math.evaluate:", resultado);
 
-      console.log("Resultado crudo de math.evaluate:", resultado); // Log para ver el valor antes de ajustar
-
-      // ****** NUEVO: Ajuste inteligente para valores cercanos a exactos ******
       if (typeof resultado === "number" && isFinite(resultado)) {
-        const epsilon = 1e-14; // Una tolerancia pequeña para la comparación
-
-        // Ajustar a 0
-        if (Math.abs(resultado) < epsilon) {
-          resultado = 0;
-          console.log("Resultado ajustado a 0 exacto.");
-        }
-        // Ajustar a 1
-        else if (Math.abs(resultado - 1) < epsilon) {
-          resultado = 1;
-          console.log("Resultado ajustado a 1 exacto.");
-        }
-        // Ajustar a -1
-        else if (Math.abs(resultado + 1) < epsilon) {
-          // resultado - (-1) es resultado + 1
-          resultado = -1;
-          console.log("Resultado ajustado a -1 exacto.");
-        }
-        // Ajustar a 0.5
-        else if (Math.abs(resultado - 0.5) < epsilon) {
-          resultado = 0.5;
-          console.log("Resultado ajustado a 0.5 exacto.");
-        }
-        // Ajustar a -0.5
-        else if (Math.abs(resultado + 0.5) < epsilon) {
-          resultado = -0.5;
-          console.log("Resultado ajustado a -0.5 exacto.");
-        }
-        // Podrías añadir más ajustes si lo ves necesario para otros valores comunes, por ejemplo:
-        // else if (Math.abs(resultado - math.sqrt(2)/2) < epsilon) {
-        //     resultado = math.evaluate('sqrt(2)/2'); // Para mantener la precisión de math.js
-        //     console.log("Resultado ajustado a sqrt(2)/2 exacto.");
-        // }
-        // else if (Math.abs(resultado - math.sqrt(3)/2) < epsilon) {
-        //     resultado = math.evaluate('sqrt(3)/2');
-        //     console.log("Resultado ajustado a sqrt(3)/2 exacto.");
-        // }
+        const epsilon = 1e-14;
+        if (Math.abs(resultado) < epsilon) resultado = 0;
+        else if (Math.abs(resultado - 1) < epsilon) resultado = 1;
+        else if (Math.abs(resultado + 1) < epsilon) resultado = -1;
+        else if (Math.abs(resultado - 0.5) < epsilon) resultado = 0.5;
+        else if (Math.abs(resultado + 0.5) < epsilon) resultado = -0.5;
       }
 
       if (typeof resultado === "number") {
         if (!isFinite(resultado)) {
           resultado = "Error (Infinito)";
         } else if (resultado === 0) {
-          // Mostrar 0 simplemente como "0"
+          // Ya ajustado, no hacer nada más para el 0
         } else if (
           Math.abs(resultado) > 1e12 ||
           (Math.abs(resultado) < 1e-9 && resultado !== 0)
@@ -315,36 +305,222 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Dentro de tu DOMContentLoaded, reemplaza la función convertirAFraccion existente:
+
   function convertirAFraccion() {
     if (
       !pantallaActual ||
-      pantallaActual.value === "" ||
-      pantallaActual.value.toLowerCase().includes("error")
-    )
+      pantallaActual.value.toLowerCase().includes("error") ||
+      pantallaActual.value.trim() === ""
+    ) {
+      console.log("ConvertirAFraccion: Pantalla vacía o con error.");
       return;
+    }
+
+    let valorActual = pantallaActual.value.trim();
+    let nuevoValor = "Error"; // Valor por defecto si algo falla
+
+    // Regex para N/D (numerador / denominador)
+    const regexFraccionSimple = /^\s*(-?\d+)\s*\/\s*(\d+)\s*$/;
+    // Regex para W N/D (entero numerador / denominador)
+    const regexNumeroMixto = /^\s*(-?)(\d+)\s+(\d+)\s*\/\s*(\d+)\s*$/;
+
+    const matchMixto = valorActual.match(regexNumeroMixto);
+    const matchSimple = valorActual.match(regexFraccionSimple);
+
     try {
-      const valorActual = pantallaActual.value;
-      const numeroAEvaluar = math.evaluate(valorActual);
-      if (typeof numeroAEvaluar === "number" && isFinite(numeroAEvaluar)) {
-        const fraccion = math.fraction(numeroAEvaluar);
-        pantallaActual.value =
-          fraccion.d === 1
-            ? fraccion.n.toString()
-            : `${fraccion.n}/${fraccion.d}`;
+      if (matchMixto) {
+        // ESTADO ACTUAL: Número Mixto (ej: "1 3/4" o "-2 1/3")
+        // ACCIÓN: Convertir a Fracción Impropia (ej: "7/4" o "-7/3")
+        console.log("Detectado Mixto -> a Impropia:", valorActual);
+        const signoStr = matchMixto[1];
+        const W = parseFloat(matchMixto[2]);
+        const N_parte = parseFloat(matchMixto[3]); // Numerador de la parte fraccionaria
+        const D_parte = parseFloat(matchMixto[4]); // Denominador de la parte fraccionaria
+
+        if (D_parte === 0) throw new Error("Denominador cero en mixto");
+        if (N_parte >= D_parte || N_parte < 0 || D_parte < 0)
+          throw new Error("Fracción mal formada en mixto");
+
+        const numeradorImpropio = W * D_parte + N_parte;
+        nuevoValor = `${signoStr}${numeradorImpropio}/${D_parte}`;
+      } else if (matchSimple) {
+        // ESTADO ACTUAL: Fracción Simple N/D (ej: "7/4" o "3/4" o "4/1")
+        console.log("Detectada Fracción Simple:", valorActual);
+        const N = parseFloat(matchSimple[1]);
+        const D = parseFloat(matchSimple[2]);
+
+        if (D === 0) throw new Error("Denominador cero");
+
+        if (Math.abs(N) >= D && D !== 1 && N % D !== 0) {
+          // Es Impropia y no es un entero exacto (ej. 7/4, no 4/2 ni 3/1)
+          // ACCIÓN: Convertir a Número Mixto (ej: "1 3/4")
+          console.log("Impropia N/D -> a Mixta");
+          const signo = N < 0 ? "-" : "";
+          const absN = Math.abs(N);
+          const W = Math.floor(absN / D);
+          const nuevoN_parte = absN % D;
+
+          nuevoValor = `${signo}${W} ${nuevoN_parte}/${D}`;
+        } else {
+          // Es Propia (ej. 3/4) o Entera (ej. 4/1, 6/2), convertir a DECIMAL
+          console.log("Propia N/D o Entera -> a Decimal");
+          const decimal = N / D;
+          nuevoValor = formatearNumeroParaPantalla(decimal); // Usaremos una función de formateo consistente
+        }
       } else {
-        pantallaActual.value = "Error (No num)";
+        // ESTADO ACTUAL: Decimal o Expresión
+        // ACCIÓN: Convertir a Fracción N/D (simplificada)
+        console.log(
+          "Detectado Decimal/Expresión -> a Fracción N/D:",
+          valorActual
+        );
+        const numeroAEvaluar = math.evaluate(valorActual);
+        if (typeof numeroAEvaluar !== "number" || !isFinite(numeroAEvaluar)) {
+          throw new Error("Valor no es numérico finito");
+        }
+        const fraccion = math.fraction(numeroAEvaluar); // math.fraction ya simplifica
+
+        if (fraccion.d === 1) {
+          // Es un entero
+          nuevoValor = fraccion.n.toString();
+        } else {
+          // Es una fracción propia o impropia
+          nuevoValor = `${fraccion.n}/${fraccion.d}`;
+        }
       }
+      pantallaActual.value = nuevoValor;
     } catch (error) {
-      console.error("Error al convertir a fracción:", error);
+      console.error("Error en convertirAFraccion:", error.message);
       pantallaActual.value = "Error";
+    }
+  }
+  // No olvides: window.convertirAFraccion = convertirAFraccion;
+
+  // Función de ayuda para formatear el número decimal consistentemente (puedes ajustarla)
+  // Esta es similar a la lógica que tienes en calcular() para formatear el resultado final.
+  function formatearNumeroParaPantalla(numero) {
+    if (typeof numero !== "number" || !isFinite(numero)) return "Error";
+
+    const epsilon = 1e-14; // Misma tolerancia que en calcular()
+    let resultadoTemporal = numero;
+
+    if (Math.abs(resultadoTemporal) < epsilon) resultadoTemporal = 0;
+    else if (Math.abs(resultadoTemporal - 1) < epsilon) resultadoTemporal = 1;
+    else if (Math.abs(resultadoTemporal + 1) < epsilon) resultadoTemporal = -1;
+    else if (Math.abs(resultadoTemporal - 0.5) < epsilon)
+      resultadoTemporal = 0.5;
+    else if (Math.abs(resultadoTemporal + 0.5) < epsilon)
+      resultadoTemporal = -0.5;
+
+    if (resultadoTemporal === 0) return "0";
+
+    let formateado;
+    if (
+      Math.abs(resultadoTemporal) > 1e12 ||
+      (Math.abs(resultadoTemporal) < 1e-9 && resultadoTemporal !== 0)
+    ) {
+      formateado = math.format(resultadoTemporal, {
+        notation: "exponential",
+        precision: 7,
+      });
+    } else {
+      formateado = math.format(resultadoTemporal, { precision: 14 });
+      formateado = parseFloat(formateado).toString(); // Quitar ceros decimales innecesarios
+    }
+    return formateado;
+  }
+
+  // --- Funciones de Memoria ---
+  function actualizarIndicadorMemoria() {
+    let indicadorElem = null;
+    if (calculadoraActual === "basica") {
+      indicadorElem = document.getElementById("memoriaIndicadorBasica");
+    } else if (calculadoraActual === "cientifica") {
+      indicadorElem = document.getElementById("memoriaIndicadorCientifica");
+    }
+    if (indicadorElem) {
+      if (memoria !== 0) {
+        indicadorElem.textContent = "M";
+        indicadorElem.style.visibility = "visible";
+      } else {
+        indicadorElem.textContent = "";
+        indicadorElem.style.visibility = "hidden";
+      }
+    }
+    console.log("Memoria ahora es:", memoria);
+  }
+
+  function memoryClear() {
+    memoria = 0;
+    actualizarIndicadorMemoria();
+  }
+
+  function memoryRecall() {
+    if (!pantallaActual) return;
+    const valorPrevio = pantallaActual.value;
+    if (
+      ["Error", "Error Sintaxis", "Error (Div/0)", "Error (Infinito)"].includes(
+        valorPrevio
+      ) ||
+      valorPrevio === "0" ||
+      valorPrevio === ""
+    ) {
+      pantallaActual.value = memoria.toString();
+    } else {
+      agregar(memoria.toString()); // O reemplazar: pantallaActual.value = memoria.toString();
+    }
+  }
+
+  function memoryStore() {
+    if (!pantallaActual) return;
+    try {
+      const valorAEvaluar = math.evaluate(pantallaActual.value || "0");
+      if (typeof valorAEvaluar === "number" && isFinite(valorAEvaluar)) {
+        memoria = valorAEvaluar;
+        actualizarIndicadorMemoria();
+      } else {
+        pantallaActual.value = "Error MS";
+      }
+    } catch (e) {
+      console.error("MS: Error al evaluar:", e);
+      pantallaActual.value = "Error MS";
+    }
+  }
+
+  function memoryAdd() {
+    if (!pantallaActual) return;
+    try {
+      const valorAEvaluar = math.evaluate(pantallaActual.value || "0");
+      if (typeof valorAEvaluar === "number" && isFinite(valorAEvaluar)) {
+        memoria = math.add(memoria, valorAEvaluar);
+        actualizarIndicadorMemoria();
+      } else {
+        pantallaActual.value = "Error M+";
+      }
+    } catch (e) {
+      console.error("M+: Error al evaluar:", e);
+      pantallaActual.value = "Error M+";
+    }
+  }
+
+  function memorySubtract() {
+    if (!pantallaActual) return;
+    try {
+      const valorAEvaluar = math.evaluate(pantallaActual.value || "0");
+      if (typeof valorAEvaluar === "number" && isFinite(valorAEvaluar)) {
+        memoria = math.subtract(memoria, valorAEvaluar);
+        actualizarIndicadorMemoria();
+      } else {
+        pantallaActual.value = "Error M-";
+      }
+    } catch (e) {
+      console.error("M-: Error al evaluar:", e);
+      pantallaActual.value = "Error M-";
     }
   }
 
   // --- Funciones para Solver de Polinomios ---
-  // (Aquí va el código completo de las funciones: miModalPolinomios, configurarInputsPolinomio,
-  // abrirModalPolinomios, resolverPolinomioDesdeModal que te pasé en el Turno 51/53/55)
-  // ... (ASEGÚRATE DE PEGAR TU CÓDIGO COMPLETO DEL SOLVER DE POLINOMIOS AQUÍ) ...
-  // COMIENZO DEL CÓDIGO DE POLINOMIOS (PEGAR AQUÍ EL DEL TURNO 55)
   let miModalPolinomios;
   const modalPolinomioElement = document.getElementById("polinomioModal");
   if (modalPolinomioElement) {
@@ -610,9 +786,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // FIN CÓDIGO DE POLINOMIOS
 
   // --- Funciones de la Calculadora Financiera ---
-  // (Aquí va el código completo de las funciones: setFinancialResult, getFinancialInput,
-  // calcularPV, calcularFV, calcularPMT, calcularN, calcularRate, limpiarFinanciera)
-  // ... (ASEGÚRATE DE PEGAR TU CÓDIGO COMPLETO DE CALCULADORA FINANCIERA AQUÍ) ...
   function setFinancialResult(elementId, value) {
     const elem = document.getElementById(elementId);
     if (!elem) return;
@@ -620,7 +793,6 @@ document.addEventListener("DOMContentLoaded", function () {
       elem.value = value.toFixed(2);
     } else {
       elem.value = "";
-      // console.error(`Error o valor no numérico para ${elementId}:`, value);
     }
   }
   function getFinancialInput(elementId, defaultValue = 0) {
@@ -774,8 +946,7 @@ document.addEventListener("DOMContentLoaded", function () {
           f_val = pv + pmt * n + fv;
           df_val = n * pv + (pmt * n * (n - 1)) / 2 - n * fv;
           if (Math.abs(df_val) < 1e-10) df_val = pv > 0 ? -1e-10 : 1e-10;
-        } // Evitar división por cero, y usar una derivada más simple para r=0
-        else {
+        } else {
           f_val = pv * term_N + (pmt * (term_N - 1)) / rate_calc + fv;
           df_val =
             n * pv * term_N_m1 +
@@ -794,7 +965,7 @@ document.addEventListener("DOMContentLoaded", function () {
         rate_calc = new_rate;
         if (rate_calc < -0.9999) {
           throw new Error("Tasa fuera de rango.");
-        } // Evitar tasa < -100%
+        }
       }
       throw new Error("Tasa no convergió");
     } catch (error) {
@@ -810,7 +981,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   // FIN DE FUNCIONES FINANCIERAS
 
-  // ****** NUEVO: Funciones para el Modo Angular ******
+  // --- Funciones para el Modo Angular ---
   function cambiarAnguloModo() {
     if (anguloModoActual === "RAD") {
       anguloModoActual = "DEG";
@@ -821,6 +992,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     console.log("Modo angular cambiado a:", anguloModoActual);
   }
+  // Ya no se necesitan presionarSin, etc. si los botones llaman a agregar() y calcular() hace la transformación.
 
   // --- Inicialización de Calculadoras y Sidebar ---
   function inicializarCalculadoras() {
@@ -849,16 +1021,20 @@ document.addEventListener("DOMContentLoaded", function () {
       .getElementById("limpiarFinanciera")
       ?.addEventListener("click", limpiarFinanciera);
 
-    btnAnguloModoElem = document.getElementById("btnAnguloModo"); // Asegurar que se obtiene aquí
+    btnAnguloModoElem = document.getElementById("btnAnguloModo"); // Asegurar que se obtiene aquí también
 
     cambiarCalculadora("basica");
   }
 
   function cambiarCalculadora(tipo) {
+    console.log("Cambiando a calculadora:", tipo); // Debug
+
+    // Ocultar todas las calculadoras
     document.querySelectorAll(".calculadora-container").forEach((calc) => {
-      if (calc) calc.style.display = "none";
+      calc.style.display = "none";
     });
 
+    // Mostrar la calculadora seleccionada
     const contenedores = {
       basica: "calculadoraBasica",
       cientifica: "calculadoraCientifica",
@@ -867,16 +1043,19 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const contenedorId = contenedores[tipo];
-    const contenedor = document.getElementById(contenedorId);
+    console.log("Intentando mostrar contenedor:", contenedorId); // Debug
 
+    const contenedor = document.getElementById(contenedorId);
     if (contenedor) {
       contenedor.style.display = "block";
+      console.log("Contenedor encontrado y mostrado"); // Debug
+
+      // Actualizar la pantalla actual
       if (tipo === "basica") {
         pantallaActual = document.getElementById("pantallaBasica");
       } else if (tipo === "cientifica") {
         pantallaActual = pantallaCientifica;
         if (!btnAnguloModoElem) {
-          // Intentar obtenerlo de nuevo si no se obtuvo al inicio
           btnAnguloModoElem = document.getElementById("btnAnguloModo");
         }
         if (btnAnguloModoElem) btnAnguloModoElem.value = anguloModoActual;
@@ -887,31 +1066,29 @@ document.addEventListener("DOMContentLoaded", function () {
         pantallaActual.value = "";
       }
     } else {
-      console.warn(
-        `Contenedor no encontrado para el tipo: ${tipo} con ID: ${contenedorId}`
-      );
-      pantallaActual = null;
+      console.error("No se encontró el contenedor:", contenedorId);
     }
 
     calculadoraActual = tipo;
 
+    // Actualizar clase activa en el menú
     document.querySelectorAll("#sidebar .nav-link").forEach((link) => {
       link.classList.remove("active");
     });
+
     const linkActivo = document.querySelector(
-      `#sidebar a[onclick*="cambiarCalculadora('${tipo}')"]`
+      `a[onclick*="cambiarCalculadora('${tipo}')"]`
     );
     if (linkActivo) {
       linkActivo.classList.add("active");
     }
 
-    if (
-      window.innerWidth <= 768 &&
-      document.getElementById("sidebar")?.classList.contains("active")
-    ) {
-      // Solo cerrar si está activo
-      document.getElementById("sidebar")?.classList.remove("active");
-      document.getElementById("content")?.classList.remove("active"); // Sincronizar content
+    // En móviles, cerrar el sidebar después de seleccionar
+    if (window.innerWidth <= 768) {
+      const sidebar = document.getElementById("sidebar");
+      if (sidebar) {
+        sidebar.classList.remove("active");
+      }
     }
   }
 
@@ -939,8 +1116,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.limpiarFinanciera = limpiarFinanciera;
 
   window.cambiarAnguloModo = cambiarAnguloModo;
-  // Ya no necesitamos presionarSin, presionarCos, etc., porque los botones llaman a agregar()
-  // y calcular() se encarga de la lógica DEG/RAD.
+  // Ya no se exponen presionarSin, etc.
 
   if (document.getElementById("gradoPolinomio")) {
     configurarInputsPolinomio();
@@ -962,7 +1138,6 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         if (miModalPolinomios && document.querySelector("#polinomioModal.show"))
           miModalPolinomios.hide();
-        // También cerrar otros modales si los hubiera y estuvieran abiertos
       }
       return;
     }

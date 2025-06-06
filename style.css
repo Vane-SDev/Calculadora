@@ -179,10 +179,7 @@ h1 { /* Título principal de la página */
     border-radius: 12px; /* Bordes más suaves */
     box-shadow: var(--shadow-strong);
     margin-top: 10px; /* Margen respecto al h2 */
-    /* max-width: 380px; /* Ya no es necesario aquí si .calculadora-container lo maneja */
-    /* width: 90%;  /* Dejar que Bootstrap o el max-width lo controlen */
-    /* margin: 0 auto; */ /* Ya está en .calculadora-container */
-    /* text-align: center; */ /* No es necesario aquí, los botones se alinean en columnas */
+    
 }
 
 /* Pantalla de la Calculadora */
@@ -301,6 +298,17 @@ h1 { /* Título principal de la página */
 .table td {
     padding: 10px; /* Ajustado */
     vertical-align: middle;
+}
+
+.indicador-memoria {
+    font-size: 0.9em; /* Un poco más pequeño que el texto normal */
+    font-weight: 300px;
+    color: #555; /* Un color que se vea bien */
+    margin-right: 8px; /* Espacio entre el indicador y el input de la pantalla */
+    display: inline-block; /* Para que esté en la misma línea que el input si así lo quieres */
+    /* Puedes añadirle un pequeño padding o borde si quieres que resalte más */
+    /* Inicialmente oculto, se mostrará con JS */
+    visibility: hidden; /* O display: none; JS lo cambiará */
 }
 
 /* ---- Media Queries para Responsive ---- */

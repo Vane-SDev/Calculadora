@@ -57,35 +57,73 @@
                 <h2>Calculadora Básica</h2>
                 <div class="calculadora calculadora-basica">
                     <div class="pantallaInput">
-                        <input type="text" id="pantallaBasica" class="form-control form-control-lg mb-2" readonly autofocus>
+                        <span id="memoriaIndicadorBasica" class="indicador-memoria"></span>
+                        <input type="text" id="pantallaBasica" class="form-control form-control-lg mb-2" readonly
+                            autofocus>
                     </div>
+
                     <div class="container-fluid px-1">
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="7" onclick="agregar('7')"></div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="8" onclick="agregar('8')"></div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="9" onclick="agregar('9')"></div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="÷" onclick="agregar('/')"></div>
+
+                        <div class="row gx-2 mb-3">
+                            <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="MC"
+                                    onclick="memoryClear()">
+                            </div>
+                            <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="MR"
+                                    onclick="memoryRecall()">
+                            </div>
+                            <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="MS"
+                                    onclick="memoryStore()">
+                            </div>
+                            <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="M+"
+                                    onclick="memoryAdd()">
+                            </div>
+                            <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="M-"
+                                    onclick="memorySubtract()">
+                            </div>
                         </div>
                         <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="4" onclick="agregar('4')"></div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="5" onclick="agregar('5')"></div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="6" onclick="agregar('6')"></div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="×" onclick="agregar('*')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="7"
+                                    onclick="agregar('7')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="8"
+                                    onclick="agregar('8')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="9"
+                                    onclick="agregar('9')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="÷"
+                                    onclick="agregar('/')"></div>
                         </div>
                         <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="1" onclick="agregar('1')"></div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="2" onclick="agregar('2')"></div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="3" onclick="agregar('3')"></div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="−" onclick="agregar('-')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="4"
+                                    onclick="agregar('4')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="5"
+                                    onclick="agregar('5')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="6"
+                                    onclick="agregar('6')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="×"
+                                    onclick="agregar('*')"></div>
                         </div>
                         <div class="row gx-2 mb-2">
-                            <div class="col-6"><input class="btn btn-light w-100" type="button" value="0" onclick="agregar('0')"></div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="." onclick="agregar('.')"></div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="+" onclick="agregar('+')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="1"
+                                    onclick="agregar('1')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="2"
+                                    onclick="agregar('2')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="3"
+                                    onclick="agregar('3')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="−"
+                                    onclick="agregar('-')"></div>
+                        </div>
+                        <div class="row gx-2 mb-2">
+                            <div class="col-6"><input class="btn btn-light w-100" type="button" value="0"
+                                    onclick="agregar('0')"></div>
+                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="."
+                                    onclick="agregar('.')"></div>
+                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="+"
+                                    onclick="agregar('+')"></div>
                         </div>
                         <div class="row gx-2">
-                            <div class="col-9"><input class="btn btn-danger w-100" type="button" value="C" onclick="borrar()"></div>
-                            <div class="col-3"><input class="btn btn-success w-100" type="button" value="=" onclick="calcular()"></div>
+                            <div class="col-9"><input class="btn btn-danger w-100" type="button" value="C"
+                                    onclick="borrar()"></div>
+                            <div class="col-3"><input class="btn btn-success w-100" type="button" value="="
+                                    onclick="calcular()"></div>
                         </div>
                     </div>
                 </div>
@@ -96,115 +134,171 @@
                 <h2>Calculadora Científica</h2>
                 <div class="calculadora">
                     <div class="pantallaInput">
-                        <input type="text" id="pantalla" class="form-control form-control-lg mb-2" readonly autofocus> 
+                        <span id="memoriaIndicadorCientifica" class="indicador-memoria"></span>
+                        <input type="text" id="pantalla" class="form-control form-control-lg mb-2" readonly autofocus>
                     </div>
-                    <input type="text" id="indice" placeholder="Índice"> 
-                    <div class="col-3"><input id="btnAnguloModo" class="btn btn-outline-warning w-100" type="button" value="RAD"
-                            onclick="cambiarAnguloModo()"></div>
+                    <input type="text" id="indice" placeholder="Índice">
+                    <div class="row gx-2 mb-3">
+                        <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="MC"
+                                onclick="memoryClear()">
+                        </div>
+                        <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="MR"
+                                onclick="memoryRecall()">
+                        </div>
+                        <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="MS"
+                                onclick="memoryStore()">
+                        </div>
+                        <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="M+"
+                                onclick="memoryAdd()">
+                        </div>
+                        <div class="col"><input class="btn btn-outline-secondary w-100" type="button" value="M-"
+                                onclick="memorySubtract()">
+                        </div>
+                    </div>
                     <div class="container-fluid px-1">
                         <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="sin"
-                                    onclick="agregar('sin(')"></div>
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="cos"
-                                    onclick="agregar('cos(')"></div>
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="tan"
-                                    onclick="agregar('tan(')"></div>
-                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="π"
-                                    onclick="agregar('pi')"></div>
-                        </div>
+                            <div class="row gx-2 mb-2">
+                                <div class="col-3"><input id="btnAnguloModo" class="btn btn-outline-warning w-100"
+                                        type="button" value="RAD" onclick="cambiarAnguloModo()"></div>
 
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="asin"
-                                    onclick="agregar('asin(')"></div>
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="acos"
-                                    onclick="agregar('acos(')"></div>
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="atan"
-                                    onclick="agregar('atan(')"></div>
-                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="e"
-                                    onclick="agregar('e')"></div>
-                        </div>
-
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="log"
-                                    onclick="agregar('log(')"></div>
-                            <div class="col-3"><input class="btn btn-info w-100" type="button" value="ln" onclick="agregar('ln(')">
+                                <div class="col-3"><input class="btn btn-info w-100" type="button" value="nCr"
+                                        onclick="agregar(' nCr ')"></div>
+                                <div class="col-3"><input class="btn btn-info w-100" type="button" value="nPr"
+                                        onclick="agregar(' nPr ')"></div>
+                                <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="n!"
+                                        onclick="agregar('!')"></div>
+                                <div class="col-3">
+                                </div>
                             </div>
                             
-                            <div class="col-3"><input class="btn btn-warning w-100" type="button" value="P(x)" onclick="abrirModalPolinomios()">
-                            </div> 
-                            
-                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="a/b"
-                                    onclick="convertirAFraccion()"></div>
-                        </div>
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="sin"
+                                            onclick="agregar('sin(')"></div>
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="cos"
+                                            onclick="agregar('cos(')"></div>
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="tan"
+                                            onclick="agregar('tan(')"></div>
+                                    <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="π"
+                                            onclick="agregar('pi')"></div>
+                                </div>
 
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="("
-                                    onclick="agregarParentesis('(')"></div>
-                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value=")"
-                                    onclick="quitarParentesis()"></div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="^" onclick="agregar('^')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="%" onclick="agregar('%')">
-                            </div>
-                        </div>
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="asin"
+                                            onclick="agregar('asin(')"></div>
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="acos"
+                                            onclick="agregar('acos(')"></div>
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="atan"
+                                            onclick="agregar('atan(')"></div>
+                                    <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="e"
+                                            onclick="agregar('e')"></div>
+                                </div>
 
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="√x" onclick="agregar('√')"></div>
-                            <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="±"
-                                    onclick="cambiarSigno()"></div>
-                            <div class="col-3"><input class="btn btn-warning w-100" type="button" value="⇦" onclick="retroceder()">
-                            </div>
-                            <div class="col-3"><input class="btn btn-danger w-100" type="button" value="C" onclick="borrar()"></div>
-                        </div>
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="log"
+                                            onclick="agregar('log(')"></div>
+                                    <div class="col-3"><input class="btn btn-info w-100" type="button" value="ln"
+                                            onclick="agregar('ln(')">
+                                    </div>
 
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="7" onclick="agregar('7')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="8" onclick="agregar('8')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="9" onclick="agregar('9')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="÷" onclick="agregar('/')">
-                            </div>
-                        </div>
+                                    <div class="col-3"><input class="btn btn-warning w-100" type="button" value="P(x)"
+                                            onclick="abrirModalPolinomios()">
+                                    </div>
 
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="4" onclick="agregar('4')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="5" onclick="agregar('5')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="6" onclick="agregar('6')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="×" onclick="agregar('*')">
-                            </div>
-                        </div>
+                                    <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="a/b"
+                                            onclick="convertirAFraccion()"></div>
+                                </div>
 
-                        <div class="row gx-2 mb-2">
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="1" onclick="agregar('1')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="2" onclick="agregar('2')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="3" onclick="agregar('3')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="−" onclick="agregar('-')">
-                            </div>
-                        </div>
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="("
+                                            onclick="agregarParentesis('(')"></div>
+                                    <div class="col-3"><input class="btn btn-secondary w-100" type="button" value=")"
+                                            onclick="quitarParentesis()"></div>
+                                    <div class="col-3"><input class="btn btn-primary w-100" type="button" value="^"
+                                            onclick="agregar('^')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-primary w-100" type="button" value="%"
+                                            onclick="agregar('%')">
+                                    </div>
+                                </div>
 
-                        <div class="row gx-2 mb-2">
-                            <div class="col-6"><input class="btn btn-light w-100" type="button" value="0" onclick="agregar('0')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-light w-100" type="button" value="." onclick="agregar('.')">
-                            </div>
-                            <div class="col-3"><input class="btn btn-primary w-100" type="button" value="+" onclick="agregar('+')">
-                            </div>
-                        </div>
-                        <div class="row gx-2">
-                            <div class="col-12"><input class="btn btn-success w-100" type="button" value="=" onclick="calcular()">
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-primary w-100" type="button" value="√x"
+                                            onclick="agregar('√')"></div>
+                                    <div class="col-3"><input class="btn btn-secondary w-100" type="button" value="±"
+                                            onclick="cambiarSigno()"></div>
+                                    <div class="col-3"><input class="btn btn-warning w-100" type="button" value="⇦"
+                                            onclick="retroceder()">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-danger w-100" type="button" value="C"
+                                            onclick="borrar()"></div>
+                                </div>
+
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="7"
+                                            onclick="agregar('7')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="8"
+                                            onclick="agregar('8')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="9"
+                                            onclick="agregar('9')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-primary w-100" type="button" value="÷"
+                                            onclick="agregar('/')">
+                                    </div>
+                                </div>
+
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="4"
+                                            onclick="agregar('4')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="5"
+                                            onclick="agregar('5')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="6"
+                                            onclick="agregar('6')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-primary w-100" type="button" value="×"
+                                            onclick="agregar('*')">
+                                    </div>
+                                </div>
+
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="1"
+                                            onclick="agregar('1')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="2"
+                                            onclick="agregar('2')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="3"
+                                            onclick="agregar('3')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-primary w-100" type="button" value="−"
+                                            onclick="agregar('-')">
+                                    </div>
+                                </div>
+
+                                <div class="row gx-2 mb-2">
+                                    <div class="col-6"><input class="btn btn-light w-100" type="button" value="0"
+                                            onclick="agregar('0')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-light w-100" type="button" value="."
+                                            onclick="agregar('.')">
+                                    </div>
+                                    <div class="col-3"><input class="btn btn-primary w-100" type="button" value="+"
+                                            onclick="agregar('+')">
+                                    </div>
+                                </div>
+                                <div class="row gx-2">
+                                    <div class="col-12"><input class="btn btn-success w-100" type="button" value="="
+                                            onclick="calcular()">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            
 
             <!-- Calculadora Financiera -->
             <div id="calculadoraFinanciera" class="calculadora-container" style="display: none;">
@@ -233,8 +327,8 @@
                         </div>
                         <div class="row gx-2">
                             <div class="col-12">
-                                <button id="calcularPV" class="btn btn-primary w-100 mb-2">Calcular PV</button>
-                                <button id="calcularFV" class="btn btn-primary w-100 mb-2">Calcular FV</button>
+                                <button id="calcularPV" class="btn btn-primary w-100 mb-2">Calcular VP</button>
+                                <button id="calcularFV" class="btn btn-primary w-100 mb-2">Calcular VF</button>
                                 <button id="calcularPMT" class="btn btn-primary w-100 mb-2">Calcular PMT</button>
                                 <button id="calcularN" class="btn btn-primary w-100 mb-2">Calcular N</button>
                                 <button id="calcularRate" class="btn btn-primary w-100 mb-2">Calcular I/Y</button>
@@ -293,76 +387,77 @@
                 </div>
             </div>
         </div>
-    </div>
+</div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
-    <script src="script.js"></script>
-    <div class="modal fade" id="polinomioModal" tabindex="-1" role="dialog" aria-labelledby="polinomioModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="polinomioModalLabel">Resolver Polinomio</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="gradoPolinomio" class="form-label">Grado del Polinomio:</label>
-                        <select class="form-select" id="gradoPolinomio" onchange="configurarInputsPolinomio()">
-                            <option value="1">1 (ax + b = 0)</option>
-                            <option value="2" selected>2 (ax² + bx + c = 0)</option>
-                            <option value="3">3 (ax³ + bx² + cx + d = 0)</option>
-                        </select>
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+        <script src="script.js"></script>
+        <div class="modal fade" id="polinomioModal" tabindex="-1" role="dialog" aria-labelledby="polinomioModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="polinomioModalLabel">Resolver Polinomio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-    
-                    <p><strong>Introduce los coeficientes:</strong></p>
-                    <div class="row g-2 align-items-center mb-2">
-                        <div class="col-auto" id="label_a">
-                            <label for="coefA" class="col-form-label">a (x³):</label>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="gradoPolinomio" class="form-label">Grado del Polinomio:</label>
+                            <select class="form-select" id="gradoPolinomio" onchange="configurarInputsPolinomio()">
+                                <option value="1">1 (ax + b = 0)</option>
+                                <option value="2" selected>2 (ax² + bx + c = 0)</option>
+                                <option value="3">3 (ax³ + bx² + cx + d = 0)</option>
+                            </select>
                         </div>
-                        <div class="col">
-                            <input type="number" class="form-control" id="coefA" placeholder="Coeficiente de x³">
+
+                        <p><strong>Introduce los coeficientes:</strong></p>
+                        <div class="row g-2 align-items-center mb-2">
+                            <div class="col-auto" id="label_a">
+                                <label for="coefA" class="col-form-label">a (x³):</label>
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control" id="coefA" placeholder="Coeficiente de x³">
+                            </div>
+                        </div>
+                        <div class="row g-2 align-items-center mb-2">
+                            <div class="col-auto" id="label_b">
+                                <label for="coefB" class="col-form-label">b (x²):</label>
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control" id="coefB" placeholder="Coeficiente de x²">
+                            </div>
+                        </div>
+                        <div class="row g-2 align-items-center mb-2">
+                            <div class="col-auto" id="label_c">
+                                <label for="coefC" class="col-form-label">c (x):</label>
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control" id="coefC" placeholder="Coeficiente de x">
+                            </div>
+                        </div>
+                        <div class="row g-2 align-items-center mb-3">
+                            <div class="col-auto" id="label_d">
+                                <label for="coefD" class="col-form-label">d (constante):</label>
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control" id="coefD" placeholder="Término constante">
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary"
+                            onclick="resolverPolinomioDesdeModal()">Resolver</button>
+
+                        <div id="resultadoPolinomio" class="mt-3">
+                            <p><strong>Raíces:</strong></p>
+                            <div id="raicesOutput"></div>
                         </div>
                     </div>
-                    <div class="row g-2 align-items-center mb-2">
-                        <div class="col-auto" id="label_b">
-                            <label for="coefB" class="col-form-label">b (x²):</label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" id="coefB" placeholder="Coeficiente de x²">
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
-                    <div class="row g-2 align-items-center mb-2">
-                        <div class="col-auto" id="label_c">
-                            <label for="coefC" class="col-form-label">c (x):</label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" id="coefC" placeholder="Coeficiente de x">
-                        </div>
-                    </div>
-                    <div class="row g-2 align-items-center mb-3">
-                        <div class="col-auto" id="label_d">
-                            <label for="coefD" class="col-form-label">d (constante):</label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" id="coefD" placeholder="Término constante">
-                        </div>
-                    </div>
-    
-                    <button type="button" class="btn btn-primary" onclick="resolverPolinomioDesdeModal()">Resolver</button>
-    
-                    <div id="resultadoPolinomio" class="mt-3">
-                        <p><strong>Raíces:</strong></p>
-                        <div id="raicesOutput"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
-    </div>
 </body>
 
 </html>
